@@ -3,13 +3,15 @@
 int parse_vertex(const char* line, Figure* figure);
 int parse_polygon(char* line, Figure* figure);
 void remove_comment(char* line);
-void check_polygon_pattern(int * num_token, int *pattern, int current_pattern, int *signal_to_fill);
+void check_polygon_pattern(int* num_token, int* pattern, int current_pattern,
+                           int* signal_to_fill);
 
-/// @brief loops over a file line by line, detects and parses vertexes and polygons
+/// @brief loops over a file line by line, detects and parses vertexes and
+/// polygons
 /// @param filename file path (better to use absolute)
 /// @param figure pointer to structure of type Figure
 /// @return error code: 1 = error; 0 = OK
-int parse_obj_file(const char * filename, Figure* figure) {
+int parse_obj_file(const char* filename, Figure* figure) {
   init_figure(figure);
   int error = OK;
   FILE* file = fopen(filename, "r");
@@ -20,10 +22,9 @@ int parse_obj_file(const char * filename, Figure* figure) {
     while (getline(&line, &line_size, file) != -1 && !error) {
       remove_comment(line);
       if (strncmp(line, "v ", 2) == 0) {
-          error = parse_vertex(line, figure);
-      } 
-      else if (strncmp(line, "f ", 2) == 0) {
-          error = parse_polygon(line, figure);
+        error = parse_vertex(line, figure);
+      } else if (strncmp(line, "f ", 2) == 0) {
+        error = parse_polygon(line, figure);
       }
     }
     if (line) free(line);
@@ -35,8 +36,8 @@ int parse_obj_file(const char * filename, Figure* figure) {
 /// @brief if a line consists of a comment - removes comment
 /// @param line file line as a string
 void remove_comment(char* line) {
-    char* comment = strchr(line, '#');
-    if (comment) *comment = '\0';
+  char* comment = strchr(line, '#');
+  if (comment) *comment = '\0';
 }
 
 /// @brief reads vertexes from line and saves them to figure
@@ -45,23 +46,28 @@ void remove_comment(char* line) {
 /// @return error code: 1 = error; 0 = OK
 int parse_vertex(const char* line, Figure* figure) {
   int error = OK;
-  double _x,_y,_z,_w = 0;
-  char c1,c2,c3,c4,c5 = 'a';
-  int last_line, signal_to_fill = 0;
+  double _x, _y, _z, _w = 0;
+  char c1, c2, c3, c4, c5 = 'a';
+  int last_line = 0, signal_to_fill = 0;
   if (line[strlen(line) - 1] != '\n') ++last_line;
 
-  int num_components = sscanf(line, "v%c%lf%c%lf%c%lf%c%lf%c", &c1, &_x, &c2, &_y, &c3, &_z, &c4, &_w, &c5);
+  int num_components = sscanf(line, "v%c%lf%c%lf%c%lf%c%lf%c", &c1, &_x, &c2,
+                              &_y, &c3, &_z, &c4, &_w, &c5);
 
-  if (!last_line && num_components == 7 && c1 == ' ' && c2 == ' ' && c3 == ' ' && c4 == '\n') {
+  if (!last_line && num_components == 7 && c1 == ' ' && c2 == ' ' &&
+      c3 == ' ' && c4 == '\n') {
     // правильный случай с 3 координатами
     ++signal_to_fill;
-  } else if (last_line && num_components == 6 && c1 == ' ' && c2 == ' ' && c3 == ' ') {
+  } else if (last_line && num_components == 6 && c1 == ' ' && c2 == ' ' &&
+             c3 == ' ') {
     // правильный случай с 3 координатами - конец файла
     ++signal_to_fill;
-  } else if (!last_line && num_components == 9 && c1 == ' ' && c2 == ' ' && c3 == ' ' && c4 == ' ' && c5 == '\n') {
+  } else if (!last_line && num_components == 9 && c1 == ' ' && c2 == ' ' &&
+             c3 == ' ' && c4 == ' ' && c5 == '\n') {
     // правильный случай с 3 координатами + w
     ++signal_to_fill;
-  } else if (last_line && num_components == 8 && c1 == ' ' && c2 == ' ' && c3 == ' ' && c4 == ' ') {
+  } else if (last_line && num_components == 8 && c1 == ' ' && c2 == ' ' &&
+             c3 == ' ' && c4 == ' ') {
     // правильный случай с 3 координатами - конец файла + w
     ++signal_to_fill;
   }
@@ -102,7 +108,7 @@ int parse_polygon(char* line, Figure* figure) {
 
   error = realloc_polygon(figure);
 
-  char * token = NULL;
+  char* token = NULL;
   token = strtok(line, " ");
   int num_token = 0;
   int pattern = 0;
@@ -123,11 +129,14 @@ int parse_polygon(char* line, Figure* figure) {
       if (signal_to_fill == 1) {
         error = realloc_vertex_p(&figure->polygon[figure->amount_polygon - 1]);
         if (!error)
-          figure->polygon[figure->amount_polygon - 1].vertex_p[figure->polygon[figure->amount_polygon - 1].amount_p - 1] = v;
+          figure->polygon[figure->amount_polygon - 1]
+              .vertex_p[figure->polygon[figure->amount_polygon - 1].amount_p -
+                        1] = v;
         else
           error = ERR;
       } else if (signal_to_fill == -1) {
-        if (figure->polygon[figure->amount_polygon - 1].vertex_p) free(figure->polygon[figure->amount_polygon - 1].vertex_p);
+        if (figure->polygon[figure->amount_polygon - 1].vertex_p)
+          free(figure->polygon[figure->amount_polygon - 1].vertex_p);
         error = realloc_down_polygon(figure);
       }
     }
@@ -143,12 +152,13 @@ int parse_polygon(char* line, Figure* figure) {
 /// @param num_token number of processed token
 /// @param pattern polygon line pattern
 /// @param current_pattern pattern of a current token
-/// @param signal_to_fill 
-void check_polygon_pattern(int * num_token, int *pattern, int current_pattern, int *signal_to_fill) {
-    if (*num_token > 1 && *pattern != current_pattern) {
-      *signal_to_fill -= 1;
-    } else {
-      *pattern = current_pattern;
-      *signal_to_fill += 1;
-    }
+/// @param signal_to_fill
+void check_polygon_pattern(int* num_token, int* pattern, int current_pattern,
+                           int* signal_to_fill) {
+  if (*num_token > 1 && *pattern != current_pattern) {
+    *signal_to_fill -= 1;
+  } else {
+    *pattern = current_pattern;
+    *signal_to_fill += 1;
+  }
 }

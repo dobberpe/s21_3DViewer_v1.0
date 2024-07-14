@@ -5,32 +5,27 @@
 #define ERR 1
 #define OK 0
 
-typedef enum {
-  x = 0,
-  y,
-  z
-} crd;
+typedef enum { x = 0, y, z } crd;
 
 typedef struct Polygon {
-  int * vertex_p;
+  int* vertex_p;
   int amount_p;
 } Polygon;
 
 typedef struct Figure {
-  double ** vertex;
+  double** vertex;
   int amount_vertex;
-  Polygon * polygon;
+  Polygon* polygon;
   int amount_polygon;
   double x_max, y_max, z_max, x_min, y_min, z_min;
 } Figure;
 
+void init_figure(Figure* figure);
+void destroy_figure(Figure* figure);
 
-void init_figure(Figure * figure);
-void destroy_figure(Figure * figure);
-
-int parse_obj_file(const char * filename, Figure* figure);
+int parse_obj_file(const char* filename, Figure* figure);
 
 int realloc_vertex(Figure* figure);
-int realloc_polygon(Figure * figure);
-int realloc_down_polygon(Figure * figure);
+int realloc_polygon(Figure* figure);
+int realloc_down_polygon(Figure* figure);
 int realloc_vertex_p(Polygon* polygon);

@@ -11,8 +11,8 @@ int main() {
 
   error = parse_obj_file(filename, &figure);
 
-  print_figure(&figure);
-  
+  if (!error) print_figure(&figure);
+
   destroy_figure(&figure);
 
   return 0;
