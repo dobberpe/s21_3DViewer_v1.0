@@ -63,7 +63,7 @@ cppcheck:
 	cppcheck --enable=all --suppress=missingIncludeSystem --check-level=exhaustive $(PARSER_DIR)/*
 
 valgrind:
-	valgrind -s -q --tool=memcheck --leak-check=yes --track-origins=yes --show-leak-kinds=all --verbose --log-file=valgrind_out.txt $(PARSER)
+	valgrind -s -q --tool=memcheck --leak-check=yes --track-origins=yes --show-leak-kinds=all --verbose --log-file=valgrind_out.txt ./$(PARSER)
 	@cat valgrind_out.txt
 	@rm valgrind_out.txt
 
