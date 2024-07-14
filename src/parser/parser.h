@@ -29,9 +29,6 @@ void init_figure(Figure * figure);
 void destroy_figure(Figure * figure);
 
 int parse_obj_file(const char * filename, Figure* figure);
-int parse_vertex(const char* line, Figure* figure);
-int parse_polygon(char* line, Figure* figure);
-void remove_comment(char* line);
 
 int realloc_vertex(Figure* figure);
 int realloc_polygon(Figure * figure);
