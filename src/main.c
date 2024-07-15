@@ -7,7 +7,7 @@ int main() {
 
   Figure figure;
 
-  const char* filename = "obj_files/icosahedron.obj";
+  const char* filename = "obj_files/example.obj";
 
   error = parse_obj_file(filename, &figure);
 

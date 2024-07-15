@@ -5,6 +5,7 @@ int parse_polygon(char* line, Figure* figure);
 void remove_comment(char* line);
 void check_polygon_pattern(int* num_token, int* pattern, int current_pattern,
                            int* signal_to_fill);
+int fill_vertex_p(Polygon* polygon, int value);
 
 /// @brief loops over a file line by line, detects and parses vertexes and
 /// polygons
@@ -126,12 +127,12 @@ int parse_polygon(char* line, Figure* figure) {
       } else if (num_token) {
         error = ERR;
       }
+      if (v < 1) signal_to_fill = -1;
       if (signal_to_fill == 1) {
         error = realloc_vertex_p(&figure->polygon[figure->amount_polygon - 1]);
         if (!error)
-          figure->polygon[figure->amount_polygon - 1]
-              .vertex_p[figure->polygon[figure->amount_polygon - 1].amount_p -
-                        1] = v;
+          error = fill_vertex_p(&figure->polygon[figure->amount_polygon - 1],
+                                v - 1);
         else
           error = ERR;
       } else if (signal_to_fill == -1) {
@@ -161,4 +162,20 @@ void check_polygon_pattern(int* num_token, int* pattern, int current_pattern,
     *pattern = current_pattern;
     *signal_to_fill += 1;
   }
+}
+
+/// @brief fills polygon line in a format:
+/// point_1 point_2 point_2 point_3 point_3 point_1
+/// @param polygon pointer to structure of type Polygon
+/// @param value int
+int fill_vertex_p(Polygon* polygon, int value) {
+  int error = OK;
+  if (polygon->amount_p - 1 != 0) {
+    polygon->vertex_p[polygon->amount_p - 2] = value;
+  }
+  polygon->vertex_p[polygon->amount_p - 1] = value;
+  error = realloc_vertex_p(polygon);
+  if (!error) polygon->vertex_p[polygon->amount_p - 1] = polygon->vertex_p[0];
+
+  return error;
 }
