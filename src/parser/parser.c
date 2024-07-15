@@ -113,7 +113,7 @@ int parse_polygon(char* line, Figure* figure) {
   token = strtok(line, " ");
   int num_token = 0;
   int pattern = 0;
-  while (token != NULL && !error) {
+  while (token != NULL && !error && signal_to_fill != -1) {
     signal_to_fill = 0;
     if (num_token) {
       if (sscanf(token, "%d/%d/%d", &v, &vt, &vn) == 3) {
@@ -125,7 +125,7 @@ int parse_polygon(char* line, Figure* figure) {
       } else if (sscanf(token, "%d", &v) == 1) {
         check_polygon_pattern(&num_token, &pattern, 4, &signal_to_fill);
       } else if (num_token) {
-        error = ERR;
+        signal_to_fill = -1;
       }
       if (v < 1) signal_to_fill = -1;
       if (signal_to_fill == 1) {

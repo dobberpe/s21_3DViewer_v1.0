@@ -1,4 +1,5 @@
 #include "parser/parser.h"
+#include "transformations/transformations.h"
 
 void print_figure(Figure* figure);
 
@@ -7,11 +8,25 @@ int main() {
 
   Figure figure;
 
-  const char* filename = "obj_files/example.obj";
+  const char* filename = "obj_files/icosahedron.obj";
 
   error = parse_obj_file(filename, &figure);
 
-  if (!error) print_figure(&figure);
+  if (!error) {
+    printf("x_max %lf ", figure.x_max);
+    printf("x_min %lf ", figure.x_min);
+    printf("y_max %lf ", figure.y_max);
+    printf("y_min %lf ", figure.y_min);
+    printf("z_max %lf ", figure.z_max);
+    printf("z_min %lf\n", figure.z_min);
+    print_figure(&figure);
+    printf("\n");
+    align_to_center(&figure);
+    print_figure(&figure);
+    printf("\n");
+    scale_figure(&figure, INITIAL_SCALE);
+    print_figure(&figure);
+  }
 
   destroy_figure(&figure);
 
