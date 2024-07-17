@@ -39,6 +39,8 @@ all: install
 
 install:
 	$(CC) $(CFLAGS) main.c $(SOURCE_PARSER) $(SOURCE_TRANSFORM) -o $(PARSER)
+	./main
+	rm main
 
 uninstall:
 

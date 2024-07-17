@@ -4,12 +4,16 @@
 #define ERR 1
 #define OK 0
 
-typedef enum { x = 0, y, z } crd;
+typedef enum { x = 0, y, z, homo} crd;
 
 typedef struct Polygon {
   int* vertex_p;
   int amount_p;
 } Polygon;
+
+typedef struct Vector {
+  double vector[3];
+} t_vector;
 
 typedef struct Figure {
   double** vertex;

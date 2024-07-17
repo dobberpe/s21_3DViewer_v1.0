@@ -8,7 +8,7 @@ int main() {
 
   Figure figure;
 
-  const char* filename = "obj_files/icosahedron.obj";
+  const char* filename = "obj_files/example.obj";
 
   error = parse_obj_file(filename, &figure);
 
@@ -20,12 +20,20 @@ int main() {
     printf("z_max %lf ", figure.z_max);
     printf("z_min %lf\n", figure.z_min);
     print_figure(&figure);
-    printf("\n");
-    align_to_center(&figure);
-    print_figure(&figure);
+    // printf("\n");
+    // align_to_center(&figure);
+    // print_figure(&figure);
     printf("\n");
     scale_figure(&figure, INITIAL_SCALE);
     print_figure(&figure);
+    printf("\n");
+
+    // t_vector vct = {0};
+    // vct.vector[0] = 1;
+    // vct.vector[1] = -1;
+    // vct.vector[2] = 2;
+    // move_figure(&figure, &vct);
+    // print_figure(&figure);
   }
 
   destroy_figure(&figure);
@@ -38,6 +46,7 @@ void print_figure(Figure* figure) {
     printf("%lf ", figure->vertex[i][x]);
     printf("%lf ", figure->vertex[i][y]);
     printf("%lf ", figure->vertex[i][z]);
+    printf("%lf ", figure->vertex[i][homo]);
     printf("\n");
   }
 

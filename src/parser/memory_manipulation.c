@@ -43,7 +43,7 @@ int realloc_vertex(Figure* figure) {
     if (!figure->vertex) error = ERR;
     if (!error) {
       ++figure->amount_vertex;
-      figure->vertex[0] = malloc(3 * sizeof(double));
+      figure->vertex[0] = malloc(4 * sizeof(double));
       if (!figure->vertex[0]) error = ERR;
     }
   } else {
@@ -54,7 +54,7 @@ int realloc_vertex(Figure* figure) {
     if (!error) {
       figure->vertex = row_tmp;
       ++figure->amount_vertex;
-      figure->vertex[figure->amount_vertex - 1] = malloc(3 * sizeof(double));
+      figure->vertex[figure->amount_vertex - 1] = malloc(4 * sizeof(double));
       if (!figure->vertex[figure->amount_vertex - 1]) error = ERR;
     }
   }

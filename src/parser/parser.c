@@ -79,6 +79,7 @@ int parse_vertex(const char* line, Figure* figure) {
       figure->vertex[figure->amount_vertex - 1][x] = _x;
       figure->vertex[figure->amount_vertex - 1][y] = _y;
       figure->vertex[figure->amount_vertex - 1][z] = _z;
+      figure->vertex[figure->amount_vertex - 1][homo] = 1;
       if (figure->amount_vertex == 1) {
         // если первая строка
         figure->x_max = figure->x_min = _x;

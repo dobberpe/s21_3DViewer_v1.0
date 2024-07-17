@@ -33,3 +33,44 @@ double max_(double a, double b, double c) {
   if (c > res) res = c;
   return res;
 }
+
+void fill_transformation_matrix(T_matrix* t_m_struct, t_vector* v_struct) {
+  for (int i = 0; i < 4; ++i) {
+    for (int j = 0; j < 4; ++j) {
+      t_m_struct->t_matrix[i][j] = i == j ? 1 : 0;
+    }
+  }
+  t_m_struct->t_matrix[0][homo] = v_struct->vector[x];
+  t_m_struct->t_matrix[1][homo] = v_struct->vector[y];
+  t_m_struct->t_matrix[2][homo] = v_struct->vector[z];
+}
+
+void matrix_transpose(T_matrix* t_m_struct) {
+  double temp = 0;
+  for (int i = 0; i < 4; ++i) {
+    for (int j = i + 1; j < 4; ++j) {
+      temp = t_m_struct->t_matrix[i][j];
+      t_m_struct->t_matrix[i][j] = t_m_struct->t_matrix[j][i];
+      t_m_struct->t_matrix[j][i] = temp;
+    }
+  }
+}
+
+void multiply_matrix(Figure* figure, T_matrix* t_m_struct) {
+  for (int i = 0; i < figure->amount_vertex; ++i) {
+    for (int j = 0; j < 4; ++j) {
+      double temp = 0;
+      for (int k = 0; k < 4; ++k) {
+        temp += figure->vertex[i][k] * t_m_struct->t_matrix[k][j];
+      }
+      figure->vertex[i][j] = temp;
+    }
+  }
+}
+
+void move_figure(Figure* figure, t_vector* v_struct) {
+  T_matrix t_m_struct = {0};
+  fill_transformation_matrix(&t_m_struct, v_struct);
+  matrix_transpose(&t_m_struct);
+  multiply_matrix(figure, &t_m_struct);
+}
