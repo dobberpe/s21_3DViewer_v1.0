@@ -1,25 +1,26 @@
 #include "transformations.h"
 
 void align_to_center(Figure* figure) {
-  double x_center = find_center_by_crd(figure->x_min, figure->x_max);
-  double y_center = find_center_by_crd(figure->y_min, figure->y_max);
-  double z_center = find_center_by_crd(figure->z_min, figure->z_max);
+  double x_center = (figure->x_min + figure->x_max) / 2.0;
+  double y_center = (figure->y_min + figure->y_max) / 2.0;
+  double z_center = (figure->z_min + figure->z_max) / 2.0;
+  double max_dist = max_(figure->x_max - x_center, figure->y_max - y_center,
+                         figure->z_max - z_center);
+  figure->cur_scale = INITIAL_SCALE / max_dist;
   for (int i = 0; i < figure->amount_vertex; ++i) {
-    figure->vertex[i][x] -= x_center;
-    figure->vertex[i][y] -= y_center;
-    figure->vertex[i][z] -= z_center;
+    figure->vertex[i][x] =
+        (figure->vertex[i][x] - x_center) * figure->cur_scale;
+    figure->vertex[i][y] =
+        (figure->vertex[i][y] - y_center) * figure->cur_scale;
+    figure->vertex[i][z] =
+        (figure->vertex[i][z] - z_center) * figure->cur_scale;
   }
 }
 
-double find_center_by_crd(double min, double max) {
-  return (min + (max - min) / 2);
-}
-
 void scale_figure(Figure* figure, double scale) {
-  double max_value =
-      max_(figure->x_max - figure->x_min, figure->y_max - figure->y_min,
-           figure->z_max - figure->z_min);
-  double scale_coef = (scale - (scale * (-1)) / max_value);
+  if (scale < 0.000001) scale = figure->cur_scale;
+  double scale_coef = scale / figure->cur_scale;
+  figure->cur_scale = scale;
   for (int i = 0; i < figure->amount_vertex; ++i) {
     figure->vertex[i][x] *= scale_coef;
     figure->vertex[i][y] *= scale_coef;
@@ -73,4 +74,39 @@ void move_figure(Figure* figure, t_vector* v_struct) {
   fill_transformation_matrix(&t_m_struct, v_struct);
   matrix_transpose(&t_m_struct);
   multiply_matrix(figure, &t_m_struct);
+}
+
+void rotate_x(Figure* figure, double alpha) {
+  alpha = alpha * M_PI / 180.0;
+  double rotation_matrix[3][3] = {
+      {1.0, 0, 0}, {0, cos(alpha), -sin(alpha)}, {0, sin(alpha), cos(alpha)}};
+  rotate_helper(figure, rotation_matrix);
+}
+
+void rotate_y(Figure* figure, double alpha) {
+  alpha = alpha * M_PI / 180.0;
+  double rotation_matrix[3][3] = {
+      {cos(alpha), 0, sin(alpha)}, {0, 1, 0}, {-sin(alpha), 0, cos(alpha)}};
+  rotate_helper(figure, rotation_matrix);
+}
+
+void rotate_z(Figure* figure, double alpha) {
+  alpha = alpha * M_PI / 180.0;
+  double rotation_matrix[3][3] = {
+      {cos(alpha), -sin(alpha), 0}, {sin(alpha), cos(alpha), 0}, {0, 0, 1}};
+  rotate_helper(figure, rotation_matrix);
+}
+
+void rotate_helper(Figure* figure, double rotation_matrix[3][3]) {
+  for (int i = 0; i < figure->amount_vertex; ++i) {
+    double tmp[3] = {0, 0, 0};
+    for (int j = 0; j < 3; ++j) {
+      for (int k = 0; k < 3; ++k) {
+        tmp[j] += rotation_matrix[j][k] * figure->vertex[i][k];
+      }
+    }
+    for (int j = 0; j < 3; ++j) {
+      figure->vertex[i][j] = tmp[j];
+    }
+  }
 }

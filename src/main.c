@@ -13,27 +13,27 @@ int main() {
   error = parse_obj_file(filename, &figure);
 
   if (!error) {
-    printf("x_max %lf ", figure.x_max);
-    printf("x_min %lf ", figure.x_min);
-    printf("y_max %lf ", figure.y_max);
-    printf("y_min %lf ", figure.y_min);
-    printf("z_max %lf ", figure.z_max);
-    printf("z_min %lf\n", figure.z_min);
     print_figure(&figure);
-    // printf("\n");
-    // align_to_center(&figure);
-    // print_figure(&figure);
     printf("\n");
-    scale_figure(&figure, INITIAL_SCALE);
+    align_to_center(&figure);
+    print_figure(&figure);
+    printf("\n");
+    scale_figure(&figure, 1);
     print_figure(&figure);
     printf("\n");
 
-    // t_vector vct = {0};
-    // vct.vector[0] = 1;
-    // vct.vector[1] = -1;
-    // vct.vector[2] = 2;
-    // move_figure(&figure, &vct);
-    // print_figure(&figure);
+    rotate_x(&figure, 45);
+    rotate_y(&figure, 45);
+    rotate_z(&figure, 45);
+    print_figure(&figure);
+    printf("\n");
+
+    t_vector vct = {0};
+    vct.vector[0] = 1;
+    vct.vector[1] = -1;
+    vct.vector[2] = 2;
+    move_figure(&figure, &vct);
+    print_figure(&figure);
   }
 
   destroy_figure(&figure);

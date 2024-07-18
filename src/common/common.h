@@ -21,6 +21,7 @@ typedef struct Figure {
   Polygon* polygon;
   int amount_polygon;
   double x_max, y_max, z_max, x_min, y_min, z_min;
+  double cur_scale;
 } Figure;
 
 #endif
