@@ -8,7 +8,7 @@
 
 #include "../common/common.h"
 
-void init_figure(Figure* figure);
+int init_figure(Figure* figure);
 void destroy_figure(Figure* figure);
 
 int parse_obj_file(const char* filename, Figure* figure);

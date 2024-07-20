@@ -22,17 +22,17 @@ int main() {
     print_figure(&figure);
     printf("\n");
 
-    rotate_x(&figure, 45);
-    rotate_y(&figure, 45);
-    rotate_z(&figure, 45);
+    figure.alpha_x = 100;
+    figure.alpha_y = 101;
+    figure.alpha_z = 102;
+    rotate_figure(&figure);
     print_figure(&figure);
     printf("\n");
 
-    t_vector vct = {0};
-    vct.vector[0] = 1;
-    vct.vector[1] = -1;
-    vct.vector[2] = 2;
-    move_figure(&figure, &vct);
+    figure.trv.move_vector[0] = 1;
+    figure.trv.move_vector[1] = -1;
+    figure.trv.move_vector[2] = 2;
+    move_figure(&figure);
     print_figure(&figure);
   }
 

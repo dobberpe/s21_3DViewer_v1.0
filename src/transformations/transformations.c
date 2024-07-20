@@ -35,78 +35,98 @@ double max_(double a, double b, double c) {
   return res;
 }
 
-void fill_transformation_matrix(T_matrix* t_m_struct, t_vector* v_struct) {
+void fill_transformation_matrix(Figure* figure) {
   for (int i = 0; i < 4; ++i) {
     for (int j = 0; j < 4; ++j) {
-      t_m_struct->t_matrix[i][j] = i == j ? 1 : 0;
+      figure->trv.tranformation_matrix[i][j] = i == j ? 1 : 0;
     }
   }
-  t_m_struct->t_matrix[0][homo] = v_struct->vector[x];
-  t_m_struct->t_matrix[1][homo] = v_struct->vector[y];
-  t_m_struct->t_matrix[2][homo] = v_struct->vector[z];
+  figure->trv.tranformation_matrix[0][homo] = figure->trv.move_vector[x];
+  figure->trv.tranformation_matrix[1][homo] = figure->trv.move_vector[y];
+  figure->trv.tranformation_matrix[2][homo] = figure->trv.move_vector[z];
 }
 
-void matrix_transpose(T_matrix* t_m_struct) {
+void matrix_transpose(double** t_matrix) {
   double temp = 0;
   for (int i = 0; i < 4; ++i) {
     for (int j = i + 1; j < 4; ++j) {
-      temp = t_m_struct->t_matrix[i][j];
-      t_m_struct->t_matrix[i][j] = t_m_struct->t_matrix[j][i];
-      t_m_struct->t_matrix[j][i] = temp;
+      temp = t_matrix[i][j];
+      t_matrix[i][j] = t_matrix[j][i];
+      t_matrix[j][i] = temp;
     }
   }
 }
 
-void multiply_matrix(Figure* figure, T_matrix* t_m_struct) {
-  for (int i = 0; i < figure->amount_vertex; ++i) {
-    for (int j = 0; j < 4; ++j) {
-      double temp = 0;
-      for (int k = 0; k < 4; ++k) {
-        temp += figure->vertex[i][k] * t_m_struct->t_matrix[k][j];
-      }
-      figure->vertex[i][j] = temp;
-    }
-  }
+void move_figure(Figure* figure) {
+  fill_transformation_matrix(figure);
+  matrix_transpose(figure->trv.tranformation_matrix);
+  mult_matrix(figure->vertex, figure->trv.tranformation_matrix,
+              figure->amount_vertex, 4);
+  // тут нужно будет создать временную матрицу с 4-й колонкой
+  // для этой операции
+  // а потом вернуть данные обратно
 }
 
-void move_figure(Figure* figure, t_vector* v_struct) {
-  T_matrix t_m_struct = {0};
-  fill_transformation_matrix(&t_m_struct, v_struct);
-  matrix_transpose(&t_m_struct);
-  multiply_matrix(figure, &t_m_struct);
+void rotate_figure(Figure* figure) {
+  double alpha_x = figure->alpha_x * M_PI / 180.0;
+  double alpha_y = figure->alpha_y * M_PI / 180.0;
+  double alpha_z = figure->alpha_z * M_PI / 180.0;
+  make_rotation_matrix(figure, alpha_x, alpha_y, alpha_z);
+  rotate_helper(figure);
 }
 
-void rotate_x(Figure* figure, double alpha) {
-  alpha = alpha * M_PI / 180.0;
-  double rotation_matrix[3][3] = {
-      {1.0, 0, 0}, {0, cos(alpha), -sin(alpha)}, {0, sin(alpha), cos(alpha)}};
-  rotate_helper(figure, rotation_matrix);
+void make_rotation_matrix(Figure* figure, double alpha_x, double alpha_y,
+                          double alpha_z) {
+  fill_rotation_matrix_crd(figure->trv.rotation_matrix_x, alpha_x, x);
+  fill_rotation_matrix_crd(figure->trv.rotation_matrix_y, alpha_y, y);
+  fill_rotation_matrix_crd(figure->trv.rotation_matrix_z, alpha_z, z);
+  mult_matrix(figure->trv.rotation_matrix_x, figure->trv.rotation_matrix_y, 3,
+              3);
+  mult_matrix(figure->trv.rotation_matrix_x, figure->trv.rotation_matrix_z, 3,
+              3);
 }
 
-void rotate_y(Figure* figure, double alpha) {
-  alpha = alpha * M_PI / 180.0;
-  double rotation_matrix[3][3] = {
-      {cos(alpha), 0, sin(alpha)}, {0, 1, 0}, {-sin(alpha), 0, cos(alpha)}};
-  rotate_helper(figure, rotation_matrix);
+void fill_rotation_matrix_crd(double** matrix, double alpha, int crd) {
+  matrix[0][0] = crd == x ? 1.0 : cos(alpha);
+  matrix[0][1] = 0;
+  if (crd == x) matrix[0][2] = 0;
+  if (crd == y) matrix[0][2] = sin(alpha);
+  if (crd == z) matrix[0][2] = -sin(alpha);
+  matrix[1][0] = crd == z ? sin(alpha) : 0;
+  matrix[1][1] = crd == y ? 1 : cos(alpha);
+  matrix[1][2] = crd == x ? -sin(alpha) : 0;
+  matrix[2][0] = crd == y ? -sin(alpha) : 0;
+  matrix[2][1] = crd == x ? sin(alpha) : 0;
+  matrix[2][2] = crd == z ? 1 : cos(alpha);
 }
 
-void rotate_z(Figure* figure, double alpha) {
-  alpha = alpha * M_PI / 180.0;
-  double rotation_matrix[3][3] = {
-      {cos(alpha), -sin(alpha), 0}, {sin(alpha), cos(alpha), 0}, {0, 0, 1}};
-  rotate_helper(figure, rotation_matrix);
-}
-
-void rotate_helper(Figure* figure, double rotation_matrix[3][3]) {
+void rotate_helper(Figure* figure) {
   for (int i = 0; i < figure->amount_vertex; ++i) {
     double tmp[3] = {0, 0, 0};
     for (int j = 0; j < 3; ++j) {
       for (int k = 0; k < 3; ++k) {
-        tmp[j] += rotation_matrix[j][k] * figure->vertex[i][k];
+        tmp[j] += figure->trv.rotation_matrix_x[j][k] * figure->vertex[i][k];
       }
     }
     for (int j = 0; j < 3; ++j) {
       figure->vertex[i][j] = tmp[j];
+    }
+  }
+}
+
+/// @brief Multiplies two 2nd matrixes, result is written to the first matrix
+/// @param m1
+/// @param m2
+/// @param rows_1
+/// @param col_2
+void mult_matrix(double** m1, double** m2, int rows_1, int col_2) {
+  for (int i = 0; i < rows_1; ++i) {
+    for (int j = 0; j < col_2; ++j) {
+      double temp = 0;
+      for (int k = 0; k < col_2; ++k) {
+        temp += m1[i][k] * m2[k][j];
+      }
+      m1[i][j] = temp;
     }
   }
 }

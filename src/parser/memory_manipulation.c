@@ -1,8 +1,12 @@
 #include "parser.h"
 
+void free_matrix(double*** matrix, int size);
+int malloc_matrix(double*** matrix, int size);
+
 /// @brief initializes structure Figure (NULL / 0)
 /// @param figure pointer to structure of type Figure
-void init_figure(Figure* figure) {
+int init_figure(Figure* figure) {
+  int error = OK;
   figure->vertex = NULL;
   figure->polygon = NULL;
   figure->amount_vertex = 0;
@@ -10,6 +14,19 @@ void init_figure(Figure* figure) {
   figure->x_max = figure->y_max = figure->z_max = 0;
   figure->x_min = figure->y_min = figure->z_min = 0;
   figure->cur_scale = 1;
+
+  figure->trv.tranformation_matrix = NULL;
+  figure->trv.rotation_matrix_x = NULL;
+  figure->trv.rotation_matrix_y = NULL;
+  figure->trv.rotation_matrix_z = NULL;
+  error = malloc_matrix(&figure->trv.tranformation_matrix, 4);
+  error = malloc_matrix(&figure->trv.rotation_matrix_x, 3);
+  error = malloc_matrix(&figure->trv.rotation_matrix_y, 3);
+  error = malloc_matrix(&figure->trv.rotation_matrix_z, 3);
+  figure->trv.move_vector[x] = 0;
+  figure->trv.move_vector[y] = 0;
+  figure->trv.move_vector[z] = 0;
+  return error;
 }
 
 /// @brief deallocates memory for figure
@@ -32,6 +49,10 @@ void destroy_figure(Figure* figure) {
     figure->vertex = NULL;
     figure->amount_vertex = 0;
   }
+  free_matrix(&figure->trv.tranformation_matrix, 4);
+  free_matrix(&figure->trv.rotation_matrix_x, 3);
+  free_matrix(&figure->trv.rotation_matrix_y, 3);
+  free_matrix(&figure->trv.rotation_matrix_z, 3);
 }
 
 /// @brief allocates memory for new vertex
@@ -131,4 +152,33 @@ int realloc_vertex_p(Polygon* polygon) {
     }
   }
   return error;
+}
+
+/// @brief allocates memory for a square matrix
+/// @param matrix
+/// @param size
+/// @return error code: 1 = error; 0 = OK
+int malloc_matrix(double*** matrix, int size) {
+  int error = OK;
+  if (*matrix == NULL) {
+    *matrix = (double**)calloc(size, sizeof(double*));
+    if (*matrix == NULL) error = ERR;
+    if (!error) {
+      for (int i = 0; i < size && !error; ++i) {
+        (*matrix)[i] = (double*)calloc(size, sizeof(double));
+        if ((*matrix)[i] == NULL) error = ERR;
+      }
+    }
+  }
+  return error;
+}
+
+void free_matrix(double*** matrix, int size) {
+  if (*matrix != NULL) {
+    for (int i = 0; i < size; ++i) {
+      if ((*matrix)[i]) free((*matrix)[i]);
+    }
+    free(*matrix);
+    *matrix = NULL;
+  }
 }
