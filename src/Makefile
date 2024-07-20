@@ -7,13 +7,13 @@ CPP = g++
 CFLAGS = -Wall -Wextra -Werror -g --std=c11
 CPPFLAGS = -Wall -Wextra -Werror -g --std=c++17
 UNAME := $(shell uname)
-# ifeq ($(UNAME), Linux)
-# 	GFLAGS = -lncurses -lgtest -lstdc++
-# endif
+ifeq ($(UNAME), Linux)
+	GFLAGS = -lm
+endif
 
-# ifeq ($(UNAME), Darwin)
-# 	GFLAGS =  -I/opt/homebrew/include -L/opt/homebrew/lib -lncurses -lgtest
-# endif
+ifeq ($(UNAME), Darwin)
+	GFLAGS =  -I/opt/homebrew/include -L/opt/homebrew/lib
+endif
 #==============================================================================#
 
 #================================ TARGET NAMES ================================#
@@ -38,7 +38,7 @@ SOURCE_TRANSFORM= $(wildcard $(TRANSFORM_DIR)/*.c)
 all: install
 
 install:
-	$(CC) $(CFLAGS) main.c $(SOURCE_PARSER) $(SOURCE_TRANSFORM) -o $(PARSER)
+	$(CC) $(CFLAGS) main.c $(SOURCE_PARSER) $(SOURCE_TRANSFORM) -o $(PARSER) $(GFLAGS)
 	./main
 	rm main
 

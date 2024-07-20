@@ -5,6 +5,10 @@
 
 #include "../common/common.h"
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 void align_to_center(Figure* figure);
 void scale_figure(Figure* figure, double scale);
 double max_(double a, double b, double c);
