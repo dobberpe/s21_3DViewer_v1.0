@@ -18,10 +18,7 @@ void rotate_figure(Figure* figure);
 
 void fill_transformation_matrix(Figure* figure);
 void matrix_transpose(double** t_matrix);
-void make_rotation_matrix(Figure* figure, double alpha_x, double alpha_y,
-                          double alpha_z);
 void fill_rotation_matrix_crd(double** matrix, double alpha, int crd);
-void rotate_helper(Figure* figure);
-void mult_matrix(double** m1, double** m2, int rows_1, int col_2);
+void rotate_helper(Figure* figure, int crd);
 
 #endif

@@ -22,9 +22,9 @@ int main() {
     print_figure(&figure);
     printf("\n");
 
-    figure.alpha_x = 100;
-    figure.alpha_y = 101;
-    figure.alpha_z = 102;
+    figure.alpha_x = 50;
+    figure.alpha_y = 50;
+    figure.alpha_z = 50;
     rotate_figure(&figure);
     print_figure(&figure);
     printf("\n");
@@ -43,10 +43,9 @@ int main() {
 
 void print_figure(Figure* figure) {
   for (int i = 0; i < figure->amount_vertex; ++i) {
-    printf("%lf ", figure->vertex[i][x]);
-    printf("%lf ", figure->vertex[i][y]);
-    printf("%lf ", figure->vertex[i][z]);
-    printf("%lf ", figure->vertex[i][homo]);
+    printf("%lf ", figure->vertex[i * 3 + x]);
+    printf("%lf ", figure->vertex[i * 3 + y]);
+    printf("%lf ", figure->vertex[i * 3 + z]);
     printf("\n");
   }
 

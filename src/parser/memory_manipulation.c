@@ -1,7 +1,7 @@
 #include "parser.h"
 
-void free_matrix(double*** matrix, int size);
 int malloc_matrix(double*** matrix, int size);
+void free_matrix(double*** matrix, int size);
 
 /// @brief initializes structure Figure (NULL / 0)
 /// @param figure pointer to structure of type Figure
@@ -42,9 +42,6 @@ void destroy_figure(Figure* figure) {
   }
 
   if (figure->vertex) {
-    for (int i = 0; i < figure->amount_vertex; ++i) {
-      if (figure->vertex[i]) free(figure->vertex[i]);
-    }
     free(figure->vertex);
     figure->vertex = NULL;
     figure->amount_vertex = 0;
@@ -61,23 +58,19 @@ void destroy_figure(Figure* figure) {
 int realloc_vertex(Figure* figure) {
   int error = OK;
   if (figure->amount_vertex == 0) {
-    figure->vertex = malloc(sizeof(double*));
+    figure->vertex = calloc(3, sizeof(double));
     if (!figure->vertex) error = ERR;
     if (!error) {
       ++figure->amount_vertex;
-      figure->vertex[0] = malloc(4 * sizeof(double));
-      if (!figure->vertex[0]) error = ERR;
     }
   } else {
-    double** row_tmp = NULL;
-    row_tmp =
-        realloc(figure->vertex, (figure->amount_vertex + 1) * sizeof(double*));
+    double* row_tmp = NULL;
+    row_tmp = realloc(figure->vertex,
+                      (figure->amount_vertex * 3 + 3) * sizeof(double));
     if (!row_tmp) error = ERR;
     if (!error) {
       figure->vertex = row_tmp;
       ++figure->amount_vertex;
-      figure->vertex[figure->amount_vertex - 1] = malloc(4 * sizeof(double));
-      if (!figure->vertex[figure->amount_vertex - 1]) error = ERR;
     }
   }
   return error;

@@ -22,7 +22,7 @@ typedef struct Polygon {
 } Polygon;
 
 typedef struct Figure {
-  double** vertex;
+  double* vertex;
   int amount_vertex;
   Polygon* polygon;
   int amount_polygon;

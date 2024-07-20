@@ -76,10 +76,9 @@ int parse_vertex(const char* line, Figure* figure) {
   if (signal_to_fill) {
     error = realloc_vertex(figure);
     if (!error) {
-      figure->vertex[figure->amount_vertex - 1][x] = _x;
-      figure->vertex[figure->amount_vertex - 1][y] = _y;
-      figure->vertex[figure->amount_vertex - 1][z] = _z;
-      figure->vertex[figure->amount_vertex - 1][homo] = 1;
+      figure->vertex[(figure->amount_vertex - 1) * 3 + x] = _x;
+      figure->vertex[(figure->amount_vertex - 1) * 3 + y] = _y;
+      figure->vertex[(figure->amount_vertex - 1) * 3 + z] = _z;
       if (figure->amount_vertex == 1) {
         // если первая строка
         figure->x_max = figure->x_min = _x;
