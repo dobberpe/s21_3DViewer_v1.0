@@ -166,6 +166,9 @@ int malloc_matrix(double*** matrix, int size) {
   return error;
 }
 
+/// @brief frees matrix memory
+/// @param matrix
+/// @param size
 void free_matrix(double*** matrix, int size) {
   if (*matrix != NULL) {
     for (int i = 0; i < size; ++i) {

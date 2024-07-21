@@ -1,7 +1,7 @@
 #include "tests.h"
 
 int main() {
-  Suite *cases[] = {test_parser(), NULL};
+  Suite *cases[] = {test_parser(), test_scale(), NULL};
 
   int total = 0;
   int failed = 0;

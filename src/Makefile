@@ -8,11 +8,11 @@ CFLAGS = -Wall -Wextra -Werror -g --std=c11
 CPPFLAGS = -Wall -Wextra -Werror -g --std=c++17
 UNAME := $(shell uname)
 ifeq ($(UNAME), Linux)
-	GFLAGS = -lm
+	GFLAGS = -lm -lcheck
 endif
 
 ifeq ($(UNAME), Darwin)
-	GFLAGS =  -I/opt/homebrew/include -L/opt/homebrew/lib
+	GFLAGS =  -lcheck
 endif
 #==============================================================================#
 
@@ -49,7 +49,9 @@ uninstall:
 
 test: clean
 	$(CC) $(CFLAGS) $(SOURCE_TEST) $(SOURCE_PARSER) $(SOURCE_TRANSFORM) -o $(TEST) $(GFLAGS)
+	@echo "\nrunning tests..."
 	@./$(TEST)
+	@echo "\ndeleting test launcher..."
 	@rm -rf $(TEST)
 
 gcov_report:
@@ -81,20 +83,25 @@ clang_n:
 	@echo "checking format..."
 
 cppcheck:
-	cppcheck --enable=all --suppress=missingIncludeSystem --check-level=exhaustive $(PARSER_DIR)/* $(TRANSFORM_DIR)/* $(COMMON_DIR)/*
+	cppcheck --enable=all --suppress=missingIncludeSystem --check-level=exhaustive $(PARSER_DIR)/* $(TRANSFORM_DIR)/* $(COMMON_DIR)/* $(TEST_DIR)/*
 
 valgrind:
 	valgrind -s -q --tool=memcheck --leak-check=yes --track-origins=yes --show-leak-kinds=all --verbose --log-file=valgrind_out.txt ./$(PARSER)
 	@cat valgrind_out.txt
 	@rm valgrind_out.txt
 
-valgrind_test:
+valgrind_test: clean
+	$(CC) $(CFLAGS) $(SOURCE_TEST) $(SOURCE_PARSER) $(SOURCE_TRANSFORM) -o $(TEST) $(GFLAGS)
+	@echo "\nstarting valgrind on tests...\n"
+	valgrind -s -q --tool=memcheck --leak-check=yes --track-origins=yes --show-leak-kinds=all --verbose --log-file=valgrind_out.txt ./$(TEST)
+	@cat valgrind_out.txt
+	@rm valgrind_out.txt
 
 rebuild: uninstall install
 
 clean:
-	@rm -rf *.gcno *.gcda *.info report $(PARSER) $(TEST) main.dSYM dist
-	@echo "cleaning..."
+	@rm -rf *.gcno *.gcda *.info report $(PARSER) $(TEST) *.dSYM dist
+	@echo "cleaning...\n"
 
 dvi:
 

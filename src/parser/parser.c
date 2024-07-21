@@ -1,6 +1,6 @@
 #include "parser.h"
 
-int parse_vertex(const char* line, Figure* figure);
+int parse_vertex(char* line, Figure* figure);
 int parse_polygon(char* line, Figure* figure);
 void remove_comment(char* line);
 void check_polygon_pattern(int* num_token, int* pattern, int current_pattern,
@@ -45,35 +45,32 @@ void remove_comment(char* line) {
 /// @param line file line as a string
 /// @param figure pointer to structure of type Figure
 /// @return error code: 1 = error; 0 = OK
-int parse_vertex(const char* line, Figure* figure) {
+int parse_vertex(char* line, Figure* figure) {
   int error = OK;
   double _x, _y, _z, _w = 0;
-  char c1, c2, c3, c4, c5 = 'a';
-  int last_line = 0, signal_to_fill = 0;
-  if (line[strlen(line) - 1] != '\n') ++last_line;
+  int signal_to_fill = 0;
 
-  int num_components = sscanf(line, "v%c%lf%c%lf%c%lf%c%lf%c", &c1, &_x, &c2,
-                              &_y, &c3, &_z, &c4, &_w, &c5);
+  char* token = NULL;
+  token = strtok(line, " ");
+  int num_token = 0;
 
-  if (!last_line && num_components == 7 && c1 == ' ' && c2 == ' ' &&
-      c3 == ' ' && c4 == '\n') {
-    // правильный случай с 3 координатами
-    ++signal_to_fill;
-  } else if (last_line && num_components == 6 && c1 == ' ' && c2 == ' ' &&
-             c3 == ' ') {
-    // правильный случай с 3 координатами - конец файла
-    ++signal_to_fill;
-  } else if (!last_line && num_components == 9 && c1 == ' ' && c2 == ' ' &&
-             c3 == ' ' && c4 == ' ' && c5 == '\n') {
-    // правильный случай с 3 координатами + w
-    ++signal_to_fill;
-  } else if (last_line && num_components == 8 && c1 == ' ' && c2 == ' ' &&
-             c3 == ' ' && c4 == ' ') {
-    // правильный случай с 3 координатами - конец файла + w
-    ++signal_to_fill;
+  while (token != NULL && signal_to_fill != -1) {
+    if (num_token == 1 && sscanf(token, "%lf", &_x) == 1) {
+      ++signal_to_fill;
+    } else if (num_token == 2 && sscanf(token, "%lf", &_y) == 1) {
+      ++signal_to_fill;
+    } else if (num_token == 3 && sscanf(token, "%lf", &_z) == 1) {
+      ++signal_to_fill;
+    } else if (num_token == 4 && sscanf(token, "%lf", &_w) == 1) {
+      ;
+    } else if (num_token > 0) {
+      signal_to_fill = -1;
+    }
+    ++num_token;
+    token = strtok(NULL, " ");
   }
 
-  if (signal_to_fill) {
+  if (signal_to_fill == 3) {
     error = realloc_vertex(figure);
     if (!error) {
       figure->vertex[(figure->amount_vertex - 1) * 3 + x] = _x;

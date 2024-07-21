@@ -1,5 +1,7 @@
 #include "transformations.h"
 
+/// @brief Changes coordinates' values so, the figure center is 0,0,0
+/// @param figure
 void align_to_center(Figure* figure) {
   double x_center = (figure->x_min + figure->x_max) / 2.0;
   double y_center = (figure->y_min + figure->y_max) / 2.0;
@@ -17,6 +19,10 @@ void align_to_center(Figure* figure) {
   }
 }
 
+/// @brief Scales figure relatively, current figure scale is always 1.0
+/// @param figure
+/// @param scale e.g. 1.1 means increase coordinates values so, the figure is
+/// bigger at 10%
 void scale_figure(Figure* figure, double scale) {
   if (scale < 0.000001) scale = figure->cur_scale;
   double scale_coef = scale / figure->cur_scale;
@@ -28,6 +34,11 @@ void scale_figure(Figure* figure, double scale) {
   }
 }
 
+/// @brief Finds max bw 3 values
+/// @param a
+/// @param b
+/// @param c
+/// @return max
 double max_(double a, double b, double c) {
   double res = a;
   if (b > res) res = b;
@@ -35,6 +46,8 @@ double max_(double a, double b, double c) {
   return res;
 }
 
+/// @brief fills transformation matrix according to set move_vector values
+/// @param figure
 void fill_transformation_matrix(Figure* figure) {
   for (int i = 0; i < 4; ++i) {
     for (int j = 0; j < 4; ++j) {
@@ -46,6 +59,8 @@ void fill_transformation_matrix(Figure* figure) {
   figure->trv.tranformation_matrix[2][homo] = figure->trv.move_vector[z];
 }
 
+/// @brief Transposes a square matrix, result rewrites the original
+/// @param t_matrix
 void matrix_transpose(double** t_matrix) {
   double temp = 0;
   for (int i = 0; i < 4; ++i) {
@@ -57,6 +72,9 @@ void matrix_transpose(double** t_matrix) {
   }
 }
 
+/// @brief Changes coordinates so, the figure is about to move relative to 0,0,0
+/// at move_vector[3] values
+/// @param figure
 void move_figure(Figure* figure) {
   fill_transformation_matrix(figure);
   matrix_transpose(figure->trv.tranformation_matrix);
@@ -72,6 +90,9 @@ void move_figure(Figure* figure) {
   }
 }
 
+/// @brief Changes coordinates so, the figure is about to rotate relative to
+/// 0,0,0 at alpha_x, alpha_y, alpha_z values. Alpha - should be set as degree
+/// @param figure
 void rotate_figure(Figure* figure) {
   double alpha_x = figure->alpha_x * M_PI / 180.0;
   double alpha_y = figure->alpha_y * M_PI / 180.0;
@@ -84,6 +105,10 @@ void rotate_figure(Figure* figure) {
   rotate_helper(figure, z);
 }
 
+/// @brief Fills rotation matrixes
+/// @param matrix
+/// @param alpha radians
+/// @param crd x, y, z
 void fill_rotation_matrix_crd(double** matrix, double alpha, int crd) {
   matrix[0][0] = crd == x ? 1.0 : cos(alpha);
   matrix[0][1] = crd == z ? -sin(alpha) : 0;
@@ -96,6 +121,9 @@ void fill_rotation_matrix_crd(double** matrix, double alpha, int crd) {
   matrix[2][2] = crd == z ? 1 : cos(alpha);
 }
 
+/// @brief Multiplies vertex on rotation matrix
+/// @param figure
+/// @param crd x, y, z
 void rotate_helper(Figure* figure, int crd) {
   for (int i = 0; i < figure->amount_vertex; ++i) {
     double tmp[3] = {0, 0, 0};
