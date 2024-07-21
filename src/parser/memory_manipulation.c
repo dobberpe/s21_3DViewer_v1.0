@@ -121,7 +121,7 @@ int realloc_down_polygon(Figure* figure) {
     }
   } else if (figure->amount_polygon == 1) {
     free(figure->polygon);
-    figure->polygon = NULL;
+    // figure->polygon = NULL;
     --figure->amount_polygon;
   }
   return error;
