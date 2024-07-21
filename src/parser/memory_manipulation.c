@@ -86,7 +86,7 @@ int realloc_polygon(Figure* figure) {
     if (!figure->polygon)
       error = ERR;
     else
-      ++figure->amount_polygon;
+      figure->amount_polygon = 1;
   } else {
     Polygon* tmp = realloc(figure->polygon,
                            (figure->amount_polygon + 1) * sizeof(Polygon));

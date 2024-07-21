@@ -8,7 +8,7 @@ int main() {
 
   Figure figure;
 
-  const char* filename = "obj_files/tests_only/wr_test_1.obj";
+  const char* filename = "obj_files/example.obj";
 
   error = parse_obj_file(filename, &figure);
 
