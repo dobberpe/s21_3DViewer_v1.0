@@ -19,17 +19,20 @@ endif
 #================================ TARGET NAMES ================================#
 CLANG_FILE = ../materials/linters/.clang-format
 PARSER = main
+TEST = test_laucnher
 #==============================================================================#
 
 #=============================== DIRECTORY NAMES ==============================#
 PARSER_DIR = parser
 TRANSFORM_DIR = transformations
 COMMON_DIR = common
+TEST_DIR = tests
 #==============================================================================#
 
 #====================== LIST OF FILE AND DIRS IN MODULES ======================#
 SOURCE_PARSER = $(wildcard $(PARSER_DIR)/*.c)
 SOURCE_TRANSFORM= $(wildcard $(TRANSFORM_DIR)/*.c)
+SOURCE_TEST = $(wildcard $(TEST_DIR)/*.c)
 #==============================================================================#
 
 #================================= MAIN TARGETS ===============================#
@@ -44,7 +47,10 @@ install:
 
 uninstall:
 
-test:
+test: clean
+	$(CC) $(CFLAGS) $(SOURCE_TEST) $(SOURCE_PARSER) $(SOURCE_TRANSFORM) -o $(TEST) $(GFLAGS)
+	@./$(TEST)
+	@rm -rf $(TEST)
 
 gcov_report:
 
@@ -55,6 +61,8 @@ clang_i:
 									$(TRANSFORM_DIR)/*.c \
 									$(TRANSFORM_DIR)/*.h \
 									$(COMMON_DIR)/*.h \
+									$(TEST_DIR)/*.c \
+									$(TEST_DIR)/*.h \
 									*.c
 	@rm .clang-format
 	@echo "formatting..."
@@ -65,6 +73,8 @@ clang_n:
 									$(PARSER_DIR)/*.h \
 									$(TRANSFORM_DIR)/*.c \
 									$(TRANSFORM_DIR)/*.h \
+									$(TEST_DIR)/*.c \
+									$(TEST_DIR)/*.h \
 									$(COMMON_DIR)/*.h \
 									*.c
 	@rm .clang-format
@@ -83,7 +93,7 @@ valgrind_test:
 rebuild: uninstall install
 
 clean:
-	@rm -rf *.gcno *.gcda *.info report $(PARSER) main.dSYM dist
+	@rm -rf *.gcno *.gcda *.info report $(PARSER) $(TEST) main.dSYM dist
 	@echo "cleaning..."
 
 dvi:
