@@ -100,7 +100,7 @@ valgrind_test: clean
 rebuild: uninstall install
 
 clean:
-	@rm -rf *.gcno *.gcda *.info report $(PARSER) $(TEST) *.dSYM dist
+	@rm -rf *.gcno *.gcda *.info report $(PARSER) $(TEST) *.dSYM dist a.out
 	@echo "cleaning...\n"
 
 dvi:

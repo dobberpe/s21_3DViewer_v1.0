@@ -36,7 +36,7 @@ void destroy_figure(Figure* figure) {
     for (int i = 0; i < figure->amount_polygon; ++i) {
       if (figure->polygon[i].vertex_p) free(figure->polygon[i].vertex_p);
     }
-    free(figure->polygon);
+    // free(figure->polygon);
     figure->polygon = NULL;
     figure->amount_polygon = 0;
   }
@@ -109,7 +109,7 @@ int realloc_polygon(Figure* figure) {
 /// @return error code: 1 = error; 0 = OK
 int realloc_down_polygon(Figure* figure) {
   int error = OK;
-  if (figure->amount_polygon) {
+  if (figure->amount_polygon > 1) {
     Polygon* tmp = NULL;
     tmp = realloc(figure->polygon,
                   (figure->amount_polygon - 1) * sizeof(Polygon));
@@ -119,6 +119,10 @@ int realloc_down_polygon(Figure* figure) {
       figure->polygon = tmp;
       --figure->amount_polygon;
     }
+  } else if (figure->amount_polygon == 1) {
+    free(figure->polygon);
+    figure->polygon = NULL;
+    --figure->amount_polygon;
   }
   return error;
 }
