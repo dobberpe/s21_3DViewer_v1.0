@@ -36,7 +36,7 @@ void destroy_figure(Figure* figure) {
     for (int i = 0; i < figure->amount_polygon; ++i) {
       if (figure->polygon[i].vertex_p) free(figure->polygon[i].vertex_p);
     }
-    // free(figure->polygon);
+    free(figure->polygon);
     figure->polygon = NULL;
     figure->amount_polygon = 0;
   }
