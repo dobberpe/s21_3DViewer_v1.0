@@ -102,7 +102,7 @@ int parse_vertex(char* line, Figure* figure) {
 /// @return error code: 1 = error; 0 = OK
 int parse_polygon(char* line, Figure* figure) {
   int error = OK;
-  int v, vt, vn, signal_to_fill = 0;
+  int v = 0, vt, vn, signal_to_fill = 0;
 
   error = realloc_polygon(figure);
 
