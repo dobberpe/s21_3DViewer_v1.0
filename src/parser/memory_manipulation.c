@@ -88,9 +88,8 @@ int realloc_polygon(Figure* figure) {
     else
       ++figure->amount_polygon;
   } else {
-    Polygon* tmp = NULL;
-    tmp = realloc(figure->polygon,
-                  (figure->amount_polygon + 1) * sizeof(Polygon));
+    Polygon* tmp = realloc(figure->polygon,
+                           (figure->amount_polygon + 1) * sizeof(Polygon));
     if (!tmp)
       error = ERR;
     else {
@@ -99,8 +98,11 @@ int realloc_polygon(Figure* figure) {
     }
   }
 
-  figure->polygon[figure->amount_polygon - 1].vertex_p = NULL;
-  figure->polygon[figure->amount_polygon - 1].amount_p = 0;
+  if (!error) {
+    figure->polygon[figure->amount_polygon - 1].vertex_p = NULL;
+    figure->polygon[figure->amount_polygon - 1].amount_p = 0;
+  }
+
   return error;
 }
 
@@ -109,20 +111,19 @@ int realloc_polygon(Figure* figure) {
 /// @return error code: 1 = error; 0 = OK
 int realloc_down_polygon(Figure* figure) {
   int error = OK;
-  if (figure->amount_polygon > 1) {
-    Polygon* tmp = NULL;
-    tmp = realloc(figure->polygon,
-                  (figure->amount_polygon - 1) * sizeof(Polygon));
+  if (figure->amount_polygon > 1 && figure->polygon) {
+    Polygon* tmp = realloc(figure->polygon,
+                           (figure->amount_polygon - 1) * sizeof(Polygon));
     if (!tmp)
       error = ERR;
     else {
       figure->polygon = tmp;
       --figure->amount_polygon;
     }
-  } else if (figure->amount_polygon == 1) {
+  } else if (figure->amount_polygon == 1 && figure->polygon) {
     free(figure->polygon);
-    // figure->polygon = NULL;
-    --figure->amount_polygon;
+    figure->polygon = NULL;
+    figure->amount_polygon = 0;
   }
   return error;
 }
