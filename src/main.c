@@ -18,9 +18,9 @@ int main() {
     // align_to_center(&figure);
     // print_figure(&figure);
     // printf("\n");
-    // scale_figure(&figure, 1);
-    // print_figure(&figure);
-    // printf("\n");
+    scale_figure(&figure, -1.1);
+    print_figure(&figure);
+    printf("\n");
 
     // figure.alpha_x = 50;
     // figure.alpha_y = 50;

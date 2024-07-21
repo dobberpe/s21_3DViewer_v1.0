@@ -1,6 +1,7 @@
 #include "transformations.h"
 
-/// @brief Changes coordinates' values so, the figure center is 0,0,0
+/// @brief Changes coordinates' values so, the figure center is 0,0,0 and max
+/// crd no more than 0.5
 /// @param figure
 void align_to_center(Figure* figure) {
   double x_center = (figure->x_min + figure->x_max) / 2.0;
