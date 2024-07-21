@@ -8,7 +8,7 @@ CFLAGS = -Wall -Wextra -Werror -g --std=c11
 CPPFLAGS = -Wall -Wextra -Werror -g --std=c++17
 UNAME := $(shell uname)
 ifeq ($(UNAME), Linux)
-	GFLAGS = -lm -lcheck
+	GFLAGS = -lm -lcheck -lsubunit
 endif
 
 ifeq ($(UNAME), Darwin)
