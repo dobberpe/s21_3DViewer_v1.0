@@ -54,7 +54,13 @@ test: clean
 	@echo "\ndeleting test launcher..."
 	@rm -rf $(TEST)
 
-gcov_report:
+gcov_report: clean
+	$(CC) $(CFLAGS) $(SOURCE_TEST) $(SOURCE_PARSER) $(SOURCE_TRANSFORM) -o $(TEST) $(GFLAGS) --coverage
+	@./$(TEST)
+	@lcov -t "tests" -o tests.info -c -d . -rc lcov_branch_coverage=1 --exclude "$(PWD)/tests/*"
+	@genhtml -o report tests.info -rc lcov_branch_coverage=1
+	@rm -rf *.gcno *.gcda *.gcov
+
 
 clang_i:
 	@cp $(CLANG_FILE) .
