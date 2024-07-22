@@ -20,6 +20,7 @@ endif
 CLANG_FILE = ../materials/linters/.clang-format
 PARSER = main
 TEST = test_laucnher
+ARG ?= $(PARSER)
 #==============================================================================#
 
 #=============================== DIRECTORY NAMES ==============================#
@@ -41,9 +42,6 @@ SOURCE_TEST = $(wildcard $(TEST_DIR)/*.c)
 all: install
 
 install:
-	$(CC) $(CFLAGS) main.c $(SOURCE_PARSER) $(SOURCE_TRANSFORM) -o $(PARSER) $(GFLAGS)
-	./main
-	# rm main
 
 uninstall:
 
@@ -62,27 +60,15 @@ gcov_report: clean
 	@rm -rf *.gcno *.gcda *.gcov
 
 
-clang_i:
+format:
 	@cp $(CLANG_FILE) .
-	@clang-format -i $(PARSER_DIR)/*.c \
-									$(PARSER_DIR)/*.h \
-									$(TRANSFORM_DIR)/*.c \
-									$(TRANSFORM_DIR)/*.h \
-									$(COMMON_DIR)/*.h \
-									$(TEST_DIR)/*.c \
-									$(TEST_DIR)/*.h
+	@find . -name '*.c' -o -name '*.h' -o -name '*.cpp' -o -name '*.hpp' 2>/dev/null | xargs -r clang-format -i
 	@rm .clang-format
 	@echo "formatting..."
 
-clang_n:
+format_check:
 	@cp $(CLANG_FILE) .
-	@clang-format -n $(PARSER_DIR)/*.c \
-									$(PARSER_DIR)/*.h \
-									$(TRANSFORM_DIR)/*.c \
-									$(TRANSFORM_DIR)/*.h \
-									$(TEST_DIR)/*.c \
-									$(TEST_DIR)/*.h \
-									$(COMMON_DIR)/*.h
+	@find . -name '*.c' -o -name '*.h' -o -name '*.cpp' -o -name '*.hpp' 2>/dev/null | xargs -r clang-format -n
 	@rm .clang-format
 	@echo "checking format..."
 
@@ -90,11 +76,11 @@ cppcheck:
 	cppcheck --enable=all --suppress=missingIncludeSystem --check-level=exhaustive $(PARSER_DIR)/* $(TRANSFORM_DIR)/* $(COMMON_DIR)/* $(TEST_DIR)/*
 
 valgrind:
-	valgrind -s -q --tool=memcheck --leak-check=yes --track-origins=yes --show-leak-kinds=all --verbose --log-file=valgrind_out.txt ./$(PARSER)
+	valgrind -s -q --tool=memcheck --leak-check=yes --track-origins=yes --show-leak-kinds=all --verbose --log-file=valgrind_out.txt ./$(ARG)
 	@cat valgrind_out.txt
 	@rm valgrind_out.txt
 
-valgrind_test: clean
+valgrind_tests: clean
 	$(CC) $(CFLAGS) $(SOURCE_TEST) $(SOURCE_PARSER) $(SOURCE_TRANSFORM) -o $(TEST) $(GFLAGS)
 	@echo "\nstarting valgrind on tests...\n"
 	valgrind -s -q --tool=memcheck --leak-check=yes --track-origins=yes --show-leak-kinds=all --verbose --log-file=valgrind_out.txt ./$(TEST)

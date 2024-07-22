@@ -9,16 +9,11 @@
 #define M_PI 3.14159265358979323846
 #endif
 
-void align_to_center(Figure* figure);
-void scale_figure(Figure* figure, double scale);
 double max_(double a, double b, double c);
 
-void move_figure(Figure* figure);
-void rotate_figure(Figure* figure);
-
-void fill_transformation_matrix(Figure* figure);
-void matrix_transpose(double** t_matrix);
-void fill_rotation_matrix_crd(double** matrix, double alpha, int crd);
-void rotate_helper(Figure* figure, int crd);
+void fill_transformation_matrix(Figure *figure);
+void matrix_transpose(double **t_matrix);
+void fill_rotation_matrix_crd(double **matrix, double alpha, int crd);
+void rotate_helper(Figure *figure, int crd);
 
 #endif
