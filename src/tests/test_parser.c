@@ -408,6 +408,21 @@ START_TEST(test_10) {
 }
 END_TEST
 
+START_TEST(test_11) {
+  int error = OK;
+  Figure figure;
+  const char *file = "obj_files/tests_only/wr_test_6.obj";
+
+  error = parse_obj_file(file, &figure);
+
+  ck_assert_msg(error == OK, "init failed");
+  ck_assert_msg(figure.amount_vertex == 0, "wrong vertexes amount parsed");
+  ck_assert_msg(figure.amount_polygon == 9, "wrong vertexes amount parsed");
+
+  destroy_figure(&figure);
+}
+END_TEST
+
 Suite *test_parser(void) {
   Suite *suite = suite_create("test_parser");
   TCase *tcase_core = tcase_create("test_parser");
@@ -423,6 +438,7 @@ Suite *test_parser(void) {
   tcase_add_test(tcase_core, test_8);
   tcase_add_test(tcase_core, test_9);
   tcase_add_test(tcase_core, test_10);
+  tcase_add_test(tcase_core, test_11);
 
   suite_add_tcase(suite, tcase_core);
 

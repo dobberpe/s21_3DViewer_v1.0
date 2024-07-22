@@ -70,8 +70,7 @@ clang_i:
 									$(TRANSFORM_DIR)/*.h \
 									$(COMMON_DIR)/*.h \
 									$(TEST_DIR)/*.c \
-									$(TEST_DIR)/*.h \
-									*.c
+									$(TEST_DIR)/*.h
 	@rm .clang-format
 	@echo "formatting..."
 
@@ -83,8 +82,7 @@ clang_n:
 									$(TRANSFORM_DIR)/*.h \
 									$(TEST_DIR)/*.c \
 									$(TEST_DIR)/*.h \
-									$(COMMON_DIR)/*.h \
-									*.c
+									$(COMMON_DIR)/*.h
 	@rm .clang-format
 	@echo "checking format..."
 
