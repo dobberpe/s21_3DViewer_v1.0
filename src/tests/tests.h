@@ -10,5 +10,6 @@
 Suite *test_parser();
 Suite *test_scale();
 Suite *test_move();
+Suite *test_rotate();
 
 #endif

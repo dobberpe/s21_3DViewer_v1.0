@@ -22,18 +22,18 @@ int main() {
     // print_figure(&figure);
     // printf("\n");
 
-    // figure.alpha_x = 50;
-    // figure.alpha_y = 50;
-    // figure.alpha_z = 50;
-    // rotate_figure(&figure);
-    // print_figure(&figure);
-    // printf("\n");
-
-    figure.trv.move_vector[0] = 2.0;
-    figure.trv.move_vector[1] = -10.25;
-    figure.trv.move_vector[2] = -5.0;
-    move_figure(&figure);
+    figure.alpha_x = 20;
+    figure.alpha_y = 0;
+    figure.alpha_z = 0;
+    rotate_figure(&figure);
     print_figure(&figure);
+    printf("\n");
+
+    // figure.trv.move_vector[0] = 2.0;
+    // figure.trv.move_vector[1] = -10.25;
+    // figure.trv.move_vector[2] = -5.0;
+    // move_figure(&figure);
+    // print_figure(&figure);
   }
 
   destroy_figure(&figure);
