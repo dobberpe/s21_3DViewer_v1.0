@@ -8,7 +8,7 @@ int main() {
 
   Figure figure;
 
-  const char* filename = "obj_files/example.obj";
+  const char* filename = "obj_files/airboat.obj";
 
   error = parse_obj_file(filename, &figure);
 
@@ -18,9 +18,9 @@ int main() {
     // align_to_center(&figure);
     // print_figure(&figure);
     // printf("\n");
-    scale_figure(&figure, -1.1);
-    print_figure(&figure);
-    printf("\n");
+    // scale_figure(&figure, -1.1);
+    // print_figure(&figure);
+    // printf("\n");
 
     // figure.alpha_x = 50;
     // figure.alpha_y = 50;
@@ -29,11 +29,11 @@ int main() {
     // print_figure(&figure);
     // printf("\n");
 
-    // figure.trv.move_vector[0] = 1;
-    // figure.trv.move_vector[1] = -1;
-    // figure.trv.move_vector[2] = 2;
-    // move_figure(&figure);
-    // print_figure(&figure);
+    figure.trv.move_vector[0] = 2.0;
+    figure.trv.move_vector[1] = -10.25;
+    figure.trv.move_vector[2] = -5.0;
+    move_figure(&figure);
+    print_figure(&figure);
   }
 
   destroy_figure(&figure);
