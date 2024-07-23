@@ -9,22 +9,11 @@
 #include <QWheelEvent>
 #include <QtOpenGL>
 #include <iostream>
-#include "model.h"
 
-typedef enum { x = 0, y, z } crd;
 
-typedef struct Polygon {
-    int* vertex_p;
-    int amount_p;
-} Polygon;
-
-typedef struct Figure {
-    double* vertex;
-    int amount_vertex;
-    Polygon* polygon;
-    int amount_polygon;
-    double x_max, y_max, z_max, x_min, y_min, z_min;
-} Figure;
+extern "C" {
+#include "common/common.h"
+}
 
 
 
@@ -36,15 +25,13 @@ public:
     Viewer(QWidget *parent = nullptr);
     ~Viewer();
 
-    obj_data data = {0, NULL, 0, NULL};
-    void parse_obj();
     double scale_val = 30;
     QPoint cur_pos;
     QPoint new_pos;
 
     Figure *new_data;
 
-    int KOCTblJIb = 30;
+    int KOCTblJIb = 3000;
 
 
 
@@ -55,6 +42,8 @@ protected:
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
     void wheelEvent(QWheelEvent *event) override;
+
+    double m_max(double a, double b, double c, int fact);
 
 };
 #endif // VIEWER_H
