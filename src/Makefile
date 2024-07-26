@@ -12,7 +12,7 @@ ifeq ($(UNAME), Linux)
 endif
 
 ifeq ($(UNAME), Darwin)
-	GFLAGS =  -lcheck
+	GFLAGS =  -I/opt/homebrew/include -L/opt/homebrew/lib -lcheck
 endif
 #==============================================================================#
 
@@ -24,10 +24,12 @@ ARG ?= $(PARSER)
 #==============================================================================#
 
 #=============================== DIRECTORY NAMES ==============================#
+BUILD_DIR = build
 PARSER_DIR = parser
 TRANSFORM_DIR = transformations
 COMMON_DIR = common
 TEST_DIR = tests
+DVI_DIR = docs
 #==============================================================================#
 
 #====================== LIST OF FILE AND DIRS IN MODULES ======================#
@@ -39,11 +41,18 @@ SOURCE_TEST = $(wildcard $(TEST_DIR)/*.c)
 #================================= MAIN TARGETS ===============================#
 .PHONY: all install uninstall cli desktop launch_cli test gcov_report clang_i clang_n cppcheck valgrind_cli valgrind_test rebuild clean dvi dist
 
-all: install
+all:
+	$(CC) $(CFLAGS) main_test.c $(SOURCE_PARSER) $(SOURCE_TRANSFORM) -o $(PARSER) $(GFLAGS)
+	./$(PARSER)
 
-install:
+install: $(BUILD_DIR)
+	@echo "installing process started..."
+	@qmake gr.pro -o $(BUILD_DIR)
+	@make -C $(BUILD_DIR)
 
 uninstall:
+	@rm -rf $(BUILD_DIR)
+	@echo "successfuly uninstalled"
 
 test: clean
 	$(CC) $(CFLAGS) $(SOURCE_TEST) $(SOURCE_PARSER) $(SOURCE_TRANSFORM) -o $(TEST) $(GFLAGS)
@@ -58,7 +67,6 @@ gcov_report: clean
 	@lcov -t "tests" -o tests.info -c -d . -rc lcov_branch_coverage=1 --exclude "$(PWD)/tests/*"
 	@genhtml -o report tests.info -rc lcov_branch_coverage=1
 	@rm -rf *.gcno *.gcda *.gcov
-
 
 format:
 	@cp $(CLANG_FILE) .
@@ -90,15 +98,24 @@ valgrind_tests: clean
 rebuild: uninstall install
 
 clean:
-	@rm -rf *.gcno *.gcda *.info report $(PARSER) $(TEST) *.dSYM dist a.out
+	@rm -rf *.gcno *.gcda *.info report $(PARSER) $(TEST) *.dSYM dist a.out $(BUILD_DIR) $(DVI_DIR)
 	@echo "cleaning...\n"
 
 dvi:
+	@rm -rf $(DVI_DIR)
+	doxygen Doxyfile
+ifeq ($(UNAME), Linux)
+	xdg-open $(DVI_DIR)/html/index.html
+endif
+ifeq ($(UNAME), Darwin)
+	open $(DVI_DIR)/html/index.html
+endif
 
 dist:
 	
 #==============================================================================#
 
 #============================== CREATE DIRECTORIES ============================#
-
+$(BUILD_DIR):
+	mkdir -p $(BUILD_DIR)
 #==============================================================================#

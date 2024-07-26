@@ -6,7 +6,7 @@ Viewer::Viewer(QWidget *parent)
     setWindowTitle("3dViewer");
     new_data = new Figure();
 
-    parse_obj_file("test.obj", new_data);
+    parse_obj_file("./obj_files/test.obj", new_data);
     align_to_center(new_data);
 
 
