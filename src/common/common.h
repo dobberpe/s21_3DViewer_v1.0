@@ -4,7 +4,7 @@
 #define ERR 1
 #define OK 0
 
-#define INITIAL_SCALE 0.5
+#define INITIAL_SCALE 1
 
 typedef enum { x = 0, y, z, homo } crd;
 

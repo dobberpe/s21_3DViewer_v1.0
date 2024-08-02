@@ -7,15 +7,12 @@ Viewer::Viewer(QWidget *parent)
     new_data = new Figure();
 
     parse_obj_file("./obj_files/test.obj", new_data);
+    // for (int i = 0; i < new_data->amount_vertex / 3; i += 3)
+    //     qDebug() << new_data->vertex[i] << new_data->vertex[i + 1] << new_data->vertex[i + 2];
     align_to_center(new_data);
-
-
-    qDebug() << new_data->x_max << new_data->y_min;
-
-    // KOCTblJIb = ((int)m_max(new_data->x_max, new_data->y_max, new_data->z_max, 1) - (int)m_max(new_data->x_min, new_data->y_min, new_data->z_min, -1)) / 22;
-    KOCTblJIb = 1;
-    qDebug() << KOCTblJIb;
-
+    std::vector<double> values {new_data->x_min, new_data->y_min, new_data->z_min, new_data->x_max, new_data->y_max, new_data->z_max};
+    const auto [min, max] = std::minmax_element(begin(values), end(values));
+    move_coef = *max - *min;
 
 }
 
@@ -35,8 +32,8 @@ void Viewer::mouseMoveEvent(QMouseEvent *event)
     new_pos = QPoint(event->globalPosition().toPoint() - cur_pos);
     if (event->buttons() & Qt::LeftButton)
     {
-        new_data->trv.move_vector[crd::x] = new_pos.x() * 0.00001 * KOCTblJIb;
-        new_data->trv.move_vector[crd::y] = -new_pos.y() * 0.00001 * KOCTblJIb;
+        new_data->trv.move_vector[crd::x] = new_pos.x() * 0.00001 * move_coef;
+        new_data->trv.move_vector[crd::y] = -new_pos.y() * 0.00001 * move_coef;
         move_figure(new_data);
         update();
     }
@@ -51,34 +48,10 @@ void Viewer::mouseMoveEvent(QMouseEvent *event)
 
 void Viewer::wheelEvent(QWheelEvent *event)
 {
-    // QPoint numDegrees = event->angleDelta() / 120;
-    // double step = 20;
-    // double scale_tmp = scale_val;
-    // if ((int)(scale_val + numDegrees.y() * step) > 0)
-    // {
-    //     scale_val += numDegrees.y() * KOCTblJIb / 10;
-    //     scale_figure(new_data, numDegrees.y() * 1);
-    //     update();
-    // }
-
-
-    QPoint numDegrees = event->angleDelta();
-    double step = 10;
-    double scale_tmp = scale_val;
-    if ((int)(scale_val + numDegrees.y() * step) > 0) {
-        scale_val += numDegrees.y() * step;
-        scale_figure(new_data, scale_val / scale_tmp);
-        update();
-    }
-}
-
-double Viewer::m_max(double a, double b, double c, int fact)
-{
-    a *= fact;
-    b *= fact;
-    c *= fact;
-    double m = a > b ? a : b;
-    return (m > c ? m : c) * fact;
+    int num_degrees = event->angleDelta().y();
+    curr_scale *= num_degrees < 0 ? 0.99 : 1.01;
+    scale_figure(new_data, curr_scale);
+    update();
 }
 
 void Viewer::mousePressEvent(QMouseEvent *event)
@@ -92,8 +65,8 @@ void Viewer::paintGL()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glFrustum(-1, 1, -1, 1, 1, KOCTblJIb);
-    glTranslatef(0, 0, -KOCTblJIb / 3);
+    glFrustum(-1, 1, -1, 1, 1, move_coef);
+    glTranslatef(0, 0, -move_coef / 2);
     glEnableClientState(GL_VERTEX_ARRAY);
 
     // рисуем точки
