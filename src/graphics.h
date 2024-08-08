@@ -20,6 +20,8 @@ extern "C" {
     Q_OBJECT
 
 public:
+    Figure *new_data;
+
     Viewer(QWidget *parent = nullptr);
     ~Viewer();
     void loadModel(QString filename);
@@ -40,7 +42,6 @@ protected:
 
     QPoint cur_pos;
     QPoint new_pos;
-    Figure *new_data;
     double curr_scale = 1;
     int move_coef;
 
