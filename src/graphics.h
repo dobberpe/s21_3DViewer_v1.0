@@ -22,6 +22,13 @@ extern "C" {
 public:
     Viewer(QWidget *parent = nullptr);
     ~Viewer();
+    void loadModel(QString filename);
+    void move_event();
+    void rotate_event();
+    void scale_event();
+    void update_alpha(int valueX, int valueY);
+    void update_move_vector(int valueX, int valueY);
+    void update_scale(int value);
 
 protected:
     void initializeGL() override;
