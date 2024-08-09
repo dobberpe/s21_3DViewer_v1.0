@@ -19,6 +19,7 @@ public:
 private:
     void rotate_slider(double rotate_X, double rotate_Y, double rotate_Z);
     void move_slider(double move_X, double move_Y, double move_Z);
+    void scale_slider(double scale);
 
     Viewer *v;
     int curr_moveX = 0;

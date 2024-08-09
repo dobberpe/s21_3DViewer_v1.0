@@ -6,7 +6,7 @@ Viewer::Viewer(QWidget *parent)
     // setWindowTitle("3dViewer");
     new_data = new Figure();
 
-    parse_obj_file("./obj_files/test.obj", new_data);
+    parse_obj_file("./obj_files/3dviewer.obj", new_data);
     // for (int i = 0; i < new_data->amount_vertex / 3; i += 3)
     //     qDebug() << new_data->vertex[i] << new_data->vertex[i + 1] << new_data->vertex[i + 2];
     align_to_center(new_data);
@@ -40,35 +40,6 @@ void Viewer::initializeGL()
     glEnable(GL_DEPTH_TEST);
 }
 
-void Viewer::update_alpha(int valueX, int valueY) {
-    new_data->alpha_x = (valueY - new_data->alpha_y) * 0.005;
-    new_data->alpha_y = (new_data->alpha_x + valueX) * 0.005;
-}
-
-void Viewer::update_move_vector(int valueX, int valueY) {
-    new_data->trv.move_vector[crd::x] = (new_data->alpha_x + valueX) * 0.0001 * move_coef;
-    new_data->trv.move_vector[crd::y] = (valueY - new_data->alpha_y) * 0.0001 * move_coef;
-}
-
-void Viewer::update_scale(int value) {
-    curr_scale = pow(value > 0 ? 1.001 : 0.999, abs(value));
-}
-
-void Viewer::move_event() {
-    move_figure(new_data);
-    update();
-}
-
-void Viewer::rotate_event() {
-    rotate_figure(new_data);
-    update();
-}
-
-void Viewer::scale_event() {
-    scale_figure(new_data, curr_scale);
-    update();
-}
-
 void Viewer::mouseMoveEvent(QMouseEvent *event)
 {
     new_pos = QPoint(event->globalPosition().toPoint() - cur_pos);
@@ -76,13 +47,15 @@ void Viewer::mouseMoveEvent(QMouseEvent *event)
     {
         new_data->trv.move_vector[crd::x] = new_pos.x() * 0.00001 * move_coef;
         new_data->trv.move_vector[crd::y] = -new_pos.y() * 0.00001 * move_coef;
-        move_event();
+        move_figure(new_data);
+        update();
     }
     else if (event->buttons() & Qt::RightButton)
     {
         new_data->alpha_x = -new_pos.y() * 0.005;
         new_data->alpha_y = new_pos.x() * 0.005;
-        rotate_event();
+        rotate_figure(new_data);
+        update();
     }
 }
 
@@ -90,7 +63,8 @@ void Viewer::wheelEvent(QWheelEvent *event)
 {
     int num_degrees = event->angleDelta().y();
     curr_scale *= num_degrees < 0 ? 0.99 : 1.01;
-    scale_event();
+    scale_figure(new_data, curr_scale);
+    update();
 }
 
 void Viewer::mousePressEvent(QMouseEvent *event)

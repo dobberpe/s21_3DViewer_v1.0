@@ -21,6 +21,7 @@ extern "C" {
 
 public:
     Figure *new_data;
+    double curr_scale = 1;
 
     Viewer(QWidget *parent = nullptr);
     ~Viewer();
@@ -42,7 +43,6 @@ protected:
 
     QPoint cur_pos;
     QPoint new_pos;
-    double curr_scale = 1;
     int move_coef;
 
 };

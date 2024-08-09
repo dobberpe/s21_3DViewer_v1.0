@@ -9,14 +9,6 @@ main_window::main_window(QWidget *parent)
     v = new Viewer;
     v->setMinimumSize(600, 600);
 
-    QPushButton *loadButton = new QPushButton("Load Model");
-    connect(loadButton, &QPushButton::clicked, [this]() {
-        QString fileName = QFileDialog::getOpenFileName(this, "Open Model File", "", "OBJ Files (*.obj)");
-        if (!fileName.isEmpty()) {
-            v->loadModel(fileName);
-        }
-    });
-
     QSlider *rotationXSlider = new QSlider(Qt::Horizontal);
     rotationXSlider->setRange(-180, 180);
     connect(rotationXSlider, &QSlider::valueChanged, [this](int value) {
@@ -62,8 +54,32 @@ main_window::main_window(QWidget *parent)
     QSlider *scaleSlider = new QSlider(Qt::Horizontal);
     scaleSlider->setRange(-180, 180);
     connect(scaleSlider, &QSlider::valueChanged, [this](int value) {
-        v->update_scale(value - curr_scale);
-        v->scale_event();
+        int scale = value - curr_scale;
+        v->curr_scale = pow(scale > 0 ? 1.001 : 0.999, abs(scale));
+        scale_figure(v->new_data, v->curr_scale);
+        v->update();
+    });
+
+    QPushButton *loadButton = new QPushButton("Load Model");
+    connect(loadButton, &QPushButton::clicked, [=]() {
+        QString fileName = QFileDialog::getOpenFileName(this, "Open Model File", "", "OBJ Files (*.obj)");
+        if (!fileName.isEmpty()) {
+            v->loadModel(fileName);
+            rotationXSlider->setValue(0);
+            rotationYSlider->setValue(0);
+            rotationZSlider->setValue(0);
+            moveXSlider->setValue(0);
+            moveYSlider->setValue(0);
+            moveZSlider->setValue(0);
+            scaleSlider->setValue(0);
+            curr_rotateX = 0;
+            curr_rotateY = 0;
+            curr_rotateZ = 0;
+            curr_moveX = 0;
+            curr_moveY = 0;
+            curr_moveZ = 0;
+            curr_scale = 0;
+        }
     });
 
     QGridLayout *layout = new QGridLayout;
