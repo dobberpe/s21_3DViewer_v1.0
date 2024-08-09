@@ -7,7 +7,7 @@ void print_figure(Figure* figure);
 int main() {
   Figure figure;
 
-  parse_obj_file("./obj_files/test.obj", &figure);
+  parse_obj_file("./obj_files/Seahawk.obj", &figure);
 
   print_figure(&figure);
 

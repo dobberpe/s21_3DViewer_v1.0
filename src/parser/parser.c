@@ -76,7 +76,7 @@ int parse_vertex(char* line, Figure* figure) {
       figure->vertex[(figure->amount_vertex - 1) * 3 + x] = _x;
       figure->vertex[(figure->amount_vertex - 1) * 3 + y] = _y;
       figure->vertex[(figure->amount_vertex - 1) * 3 + z] = _z;
-      printf("%lf, %lf, %lf\n", _x, _y, _z);
+      // printf("%lf, %lf, %lf\n", _x, _y, _z);
       
       if (figure->amount_vertex == 1) {
         // если первая строка
