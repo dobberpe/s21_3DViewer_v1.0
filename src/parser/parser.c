@@ -1,5 +1,7 @@
 #include "parser.h"
 
+#include <errno.h>
+
 int parse_vertex(char* line, Figure* figure);
 int parse_polygon(char* line, Figure* figure);
 void remove_comment(char* line);
@@ -47,7 +49,7 @@ void remove_comment(char* line) {
 /// @return error code: 1 = error; 0 = OK
 int parse_vertex(char* line, Figure* figure) {
   int error = OK;
-  double _x, _y, _z, _w = 0;
+  double _x, _y, _z;
   int signal_to_fill = 0;
 
   char* token = NULL;
@@ -55,14 +57,27 @@ int parse_vertex(char* line, Figure* figure) {
   int num_token = 0;
 
   while (token != NULL && signal_to_fill != -1) {
-    if (num_token == 1 && sscanf(token, "%lf", &_x) == 1) {
-      ++signal_to_fill;
-    } else if (num_token == 2 && sscanf(token, "%lf", &_y) == 1) {
-      ++signal_to_fill;
-    } else if (num_token == 3 && sscanf(token, "%lf", &_z) == 1) {
-      ++signal_to_fill;
-    } else if (num_token == 4 && sscanf(token, "%lf", &_w) == 1) {
-      ;
+    char* endptr;
+    errno = 0;  // Сбрасываем ошибку перед вызовом strtod
+
+    double value = strtod(token, &endptr);
+
+    if (endptr != token && errno == 0 &&
+        (*endptr == '\0' || *endptr == ' ' || *endptr == '\n')) {
+      if (num_token == 1) {
+        _x = value;
+        ++signal_to_fill;
+      } else if (num_token == 2) {
+        _y = value;
+        ++signal_to_fill;
+      } else if (num_token == 3) {
+        _z = value;
+        ++signal_to_fill;
+      } else if (num_token == 4) {
+        ;
+      } else if (num_token > 0) {
+        signal_to_fill = -1;
+      }
     } else if (num_token > 0) {
       signal_to_fill = -1;
     }
@@ -76,8 +91,7 @@ int parse_vertex(char* line, Figure* figure) {
       figure->vertex[(figure->amount_vertex - 1) * 3 + x] = _x;
       figure->vertex[(figure->amount_vertex - 1) * 3 + y] = _y;
       figure->vertex[(figure->amount_vertex - 1) * 3 + z] = _z;
-      // printf("%lf, %lf, %lf\n", _x, _y, _z);
-      
+
       if (figure->amount_vertex == 1) {
         // если первая строка
         figure->x_max = figure->x_min = _x;
@@ -104,26 +118,35 @@ int parse_vertex(char* line, Figure* figure) {
 /// @return error code: 1 = error; 0 = OK
 int parse_polygon(char* line, Figure* figure) {
   int error = OK;
-  int v = 0, vt, vn, signal_to_fill = 0;
+  int v = 0, signal_to_fill = 0;
 
   error = realloc_polygon(figure);
 
   char* token = NULL;
   token = strtok(line, " ");
   int num_token = 0;
-  int pattern = 0;
+  // int pattern = 0;
   while (token != NULL && !error && signal_to_fill != -1) {
     signal_to_fill = 0;
+    char* endptr;
+    errno = 0;
+
     if (num_token) {
-      if (sscanf(token, "%d/%d/%d", &v, &vt, &vn) == 3) {
-        check_polygon_pattern(&num_token, &pattern, 1, &signal_to_fill);
-      } else if (sscanf(token, "%d/%d", &v, &vt) == 2) {
-        check_polygon_pattern(&num_token, &pattern, 2, &signal_to_fill);
-      } else if (sscanf(token, "%d//%d", &v, &vn) == 2) {
-        check_polygon_pattern(&num_token, &pattern, 3, &signal_to_fill);
-      } else if (sscanf(token, "%d", &v) == 1) {
-        check_polygon_pattern(&num_token, &pattern, 4, &signal_to_fill);
-      } else if (num_token) {
+      v = strtol(token, &endptr, 10);
+      if (endptr != token && errno == 0 &&
+          (*endptr == '\0' || *endptr == ' ' || *endptr == '\n' ||
+           *endptr == '/')) {
+        int countdash = 0;
+        while (*endptr == '/') {
+          char* ptr = *(endptr + 1) == '/' ? endptr + 2 : endptr + 1;
+          strtol(ptr, &endptr, 10);
+          ++countdash;
+        }
+        if (countdash > 2)
+          signal_to_fill = -1;
+        else
+          signal_to_fill = 1;
+      } else {
         signal_to_fill = -1;
       }
       if (v < 1) signal_to_fill = -1;
@@ -140,6 +163,33 @@ int parse_polygon(char* line, Figure* figure) {
         error = realloc_down_polygon(figure);
       }
     }
+
+    // if (num_token) {
+    //   if (sscanf(token, "%d/%d/%d", &v, &vt, &vn) == 3) {
+    //     check_polygon_pattern(&num_token, &pattern, 1, &signal_to_fill);
+    //   } else if (sscanf(token, "%d/%d", &v, &vt) == 2) {
+    //     check_polygon_pattern(&num_token, &pattern, 2, &signal_to_fill);
+    //   } else if (sscanf(token, "%d//%d", &v, &vn) == 2) {
+    //     check_polygon_pattern(&num_token, &pattern, 3, &signal_to_fill);
+    //   } else if (sscanf(token, "%d", &v) == 1) {
+    //     check_polygon_pattern(&num_token, &pattern, 4, &signal_to_fill);
+    //   } else if (num_token) {
+    //     signal_to_fill = -1;
+    //   }
+    //   if (v < 1) signal_to_fill = -1;
+    //   if (signal_to_fill == 1) {
+    //     error = realloc_vertex_p(&figure->polygon[figure->amount_polygon -
+    //     1]); if (!error)
+    //       error = fill_vertex_p(&figure->polygon[figure->amount_polygon - 1],
+    //                             v - 1);
+    //     else
+    //       error = ERR;
+    //   } else if (signal_to_fill == -1) {
+    //     if (figure->polygon[figure->amount_polygon - 1].vertex_p)
+    //       free(figure->polygon[figure->amount_polygon - 1].vertex_p);
+    //     error = realloc_down_polygon(figure);
+    //   }
+    // }
     ++num_token;
     token = strtok(NULL, " ");
   }

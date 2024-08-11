@@ -11,14 +11,13 @@
 
 // struct to render 3d wireframe from Wavefront .obj file
 typedef struct data {
-    size_t vertices_count;
-    double *vertices_arr;
-    size_t vertex_indices_count;
-    int *vertex_indices_arr;
+  size_t vertices_count;
+  double *vertices_arr;
+  size_t vertex_indices_count;
+  int *vertex_indices_arr;
 } obj_data;
 
 enum exec_statuses { OK, ERROR };
-
 
 /**
  * @brief Function runner for parsing object files and writing to an object with
@@ -80,4 +79,4 @@ void move_X(obj_data *obj, const double k);
 void move_Y(obj_data *obj, const double k);
 void move_Z(obj_data *obj, const double k);
 
-#endif // MODEL_H
+#endif  // MODEL_H

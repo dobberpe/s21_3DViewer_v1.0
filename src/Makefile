@@ -45,10 +45,12 @@ all:
 	$(CC) $(CFLAGS) main_test.c $(SOURCE_PARSER) $(SOURCE_TRANSFORM) -o $(PARSER) $(GFLAGS)
 	./$(PARSER)
 
-install: $(BUILD_DIR)
+install: uninstall $(BUILD_DIR)
 	@echo "installing process started..."
 	@qmake gr.pro -o $(BUILD_DIR)
 	@make -C $(BUILD_DIR)
+	@rm -rf $(BUILD_DIR)/*o $(BUILD_DIR)/*h $(BUILD_DIR)/*cpp $(BUILD_DIR)/Makefile
+	@echo "successfuly installed"
 
 uninstall:
 	@rm -rf $(BUILD_DIR)
