@@ -1,13 +1,9 @@
-QT       += core gui openglwidgets
+QT += core gui openglwidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-CONFIG += c++17
-
-# Отключаем оптимизации компилятора
-QMAKE_CXXFLAGS += -O0 -DGL_SILENCE_DEPRECATION
-QMAKE_CFLAGS += -Wall -Wextra -Werror -std=gnu11
-QMAKE_CXXFLAGS += -Wall -Wextra -Werror -std=c++17
+QMAKE_CFLAGS   += -Wall -Wextra -Werror -std=gnu11
+QMAKE_CXXFLAGS += -Wall -Wextra -Werror -std=c++17 -O0 -DGL_SILENCE_DEPRECATION
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -30,6 +26,7 @@ HEADERS += \
     model.h \
     graphics.h
 
+# LIBS += -lGL -lGLU
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
