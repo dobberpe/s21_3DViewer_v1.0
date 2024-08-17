@@ -42,7 +42,7 @@ SOURCE_TEST = $(wildcard $(TEST_DIR)/*.c)
 .PHONY: all install uninstall cli desktop launch_cli test gcov_report clang_i clang_n cppcheck valgrind_cli valgrind_test rebuild clean dvi dist
 
 all:
-	$(CCm) $(CFLAGS) main_test.c $(SOURCE_PARSER) $(SOURCE_TRANSFORM) -o $(PARSER) $(GFLAGS)
+	$(CC) $(CFLAGS) main_test.c $(SOURCE_PARSER) $(SOURCE_TRANSFORM) -o $(PARSER) $(GFLAGS)
 	./$(PARSER)
 
 install: uninstall $(BUILD_DIR)
