@@ -15,6 +15,7 @@ int fill_vertex_p(Figure* figure, int* signal_to_fill, int v);
 /// @param figure pointer to structure of type Figure
 /// @return error code: 1 = error; 0 = OK
 int parse_obj_file(const char* filename, Figure* figure) {
+  setlocale(LC_NUMERIC, "C");
   init_figure(figure);
   int error = OK;
   FILE* file = fopen(filename, "r");
@@ -49,7 +50,7 @@ void remove_comment(const char* line) {
 /// @return error code: 1 = error; 0 = OK
 int parse_vertex(char* line, Figure* figure) {
   int error = OK, signal_to_fill = 0, num_token = 0;
-  double _x, _y, _z;
+  double _x = 0, _y = 0, _z = 0;
   const char* token = NULL;
   token = strtok(line, " ");
 
