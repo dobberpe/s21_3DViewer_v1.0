@@ -1,13 +1,9 @@
 #include "graphics.h"
 
 Viewer::Viewer(QWidget *parent) : QOpenGLWidget(parent) {
-  // setWindowTitle("3dViewer");
+  setWindowTitle("3dViewer");
   new_data = new Figure();
-
   parse_obj_file("./obj_files/3dviewer.obj", new_data);
-  // for (int i = 0; i < new_data->amount_vertex / 3; i += 3)
-  //     qDebug() << new_data->vertex[i] << new_data->vertex[i + 1] <<
-  //     new_data->vertex[i + 2];
   align_to_center(new_data);
   std::vector<double> values{new_data->x_min, new_data->y_min, new_data->z_min,
                              new_data->x_max, new_data->y_max, new_data->z_max};
@@ -26,7 +22,7 @@ void Viewer::loadModel(QString filename) {
   std::vector<double> values{new_data->x_min, new_data->y_min, new_data->z_min,
                              new_data->x_max, new_data->y_max, new_data->z_max};
   const auto [min, max] = std::minmax_element(begin(values), end(values));
-  move_coef = *max - *min;
+  move_coef = (*max - *min) * 2;
   update();
 }
 

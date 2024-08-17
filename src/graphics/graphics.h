@@ -12,7 +12,7 @@
 #include <iostream>
 
 extern "C" {
-#include "common/common.h"
+#include "../common/common.h"
 }
 
 class Viewer : public QOpenGLWidget {

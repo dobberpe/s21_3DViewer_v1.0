@@ -8,7 +8,7 @@
 #include <QSlider>
 #include <QVBoxLayout>
 
-#include "graphics.h"
+#include "graphics/graphics.h"
 
 class main_window : public QMainWindow {
   Q_OBJECT
