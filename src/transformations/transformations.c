@@ -9,12 +9,9 @@ void align_to_center(Figure* figure) {
   double y_center = (figure->y_min + figure->y_max) / 2.0;
   double z_center = (figure->z_min + figure->z_max) / 2.0;
   for (int i = 0; i < figure->amount_vertex; ++i) {
-    figure->vertex[i * 3 + x] =
-        (figure->vertex[i * 3 + x] - x_center);
-    figure->vertex[i * 3 + y] =
-        (figure->vertex[i * 3 + y] - y_center);
-    figure->vertex[i * 3 + z] =
-        (figure->vertex[i * 3 + z] - z_center);
+    figure->vertex[i * 3 + x] = (figure->vertex[i * 3 + x] - x_center);
+    figure->vertex[i * 3 + y] = (figure->vertex[i * 3 + y] - y_center);
+    figure->vertex[i * 3 + z] = (figure->vertex[i * 3 + z] - z_center);
   }
 }
 

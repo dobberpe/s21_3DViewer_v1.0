@@ -133,7 +133,7 @@ int parse_polygon(char* line, Figure* figure) {
   const char* token = NULL;
   token = strtok(line, " ");
   int num_token = 0, prev_pattern = -1, pattern;
-  while (token != NULL && !error && signal_to_fill != -1) {
+  while (token != NULL && *token != '\n' && !error && signal_to_fill != -1) {
     signal_to_fill = 0;
     char* endptr;
     errno = 0;

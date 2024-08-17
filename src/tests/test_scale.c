@@ -7,14 +7,18 @@ START_TEST(test_center_align) {
 
   error = parse_obj_file(file, &figure);
   ck_assert_msg(error == OK, "init failed");
+  double check_x = figure.vertex[x];
+  double check_y = figure.vertex[y];
+  double check_z = figure.vertex[z];
+  double x_center = (figure.x_min + figure.x_max) / 2.0;
+  double y_center = (figure.y_min + figure.y_max) / 2.0;
+  double z_center = (figure.z_min + figure.z_max) / 2.0;
 
   align_to_center(&figure);
 
-  for (int i = 0; i < figure.amount_vertex; ++i) {
-    ck_assert_msg(fabs(figure.vertex[i * 3 + x]) <= 0.5, "aligning failed");
-    ck_assert_msg(fabs(figure.vertex[i * 3 + y]) <= 0.5, "aligning failed");
-    ck_assert_msg(fabs(figure.vertex[i * 3 + z]) <= 0.5, "aligning failed");
-  }
+  ck_assert_msg(figure.vertex[x] == (check_x - x_center), "aligning failed");
+  ck_assert_msg(figure.vertex[y] == (check_y - y_center), "aligning failed");
+  ck_assert_msg(figure.vertex[z] == (check_z - z_center), "aligning failed");
 
   destroy_figure(&figure);
 }
@@ -23,18 +27,22 @@ END_TEST
 START_TEST(test_center_align_2) {
   int error = OK;
   Figure figure;
-  const char *file = "obj_files/pyramid.obj";
+  const char *file = "obj_files/al.obj";
 
   error = parse_obj_file(file, &figure);
   ck_assert_msg(error == OK, "init failed");
+  double check_x = figure.vertex[x];
+  double check_y = figure.vertex[y];
+  double check_z = figure.vertex[z];
+  double x_center = (figure.x_min + figure.x_max) / 2.0;
+  double y_center = (figure.y_min + figure.y_max) / 2.0;
+  double z_center = (figure.z_min + figure.z_max) / 2.0;
 
   align_to_center(&figure);
 
-  for (int i = 0; i < figure.amount_vertex; ++i) {
-    ck_assert_msg(fabs(figure.vertex[i * 3 + x]) <= 0.5, "aligning failed");
-    ck_assert_msg(fabs(figure.vertex[i * 3 + y]) <= 0.5, "aligning failed");
-    ck_assert_msg(fabs(figure.vertex[i * 3 + z]) <= 0.5, "aligning failed");
-  }
+  ck_assert_msg(figure.vertex[x] == (check_x - x_center), "aligning failed");
+  ck_assert_msg(figure.vertex[y] == (check_y - y_center), "aligning failed");
+  ck_assert_msg(figure.vertex[z] == (check_z - z_center), "aligning failed");
 
   destroy_figure(&figure);
 }
