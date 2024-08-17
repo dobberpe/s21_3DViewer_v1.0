@@ -52,7 +52,7 @@ START_TEST(test_1) {
 
   ck_assert_msg(error == OK, "init failed");
   ck_assert_msg(figure.amount_vertex == 5797, "wrong vertexes amount parsed");
-  ck_assert_msg(figure.amount_polygon == 6273, "wrong vertexes amount parsed");
+  ck_assert_msg(figure.amount_polygon == 6273, "wrong polygon amount parsed");
 
   ck_assert_msg(figure.vertex[0 + 0] == 2.712726,
                 "wrong first line vertex value [0]");
@@ -111,7 +111,7 @@ START_TEST(test_2) {
 
   ck_assert_msg(error == OK, "init failed");
   ck_assert_msg(figure.amount_vertex == 3618, "wrong vertexes amount parsed");
-  ck_assert_msg(figure.amount_polygon == 3442, "wrong vertexes amount parsed");
+  ck_assert_msg(figure.amount_polygon == 3442, "wrong polygon amount parsed");
 
   ck_assert_msg(figure.vertex[0 + 0] == 0.786019,
                 "wrong first line vertex value [0]");
@@ -170,7 +170,7 @@ START_TEST(test_3) {
 
   ck_assert_msg(error == OK, "init failed");
   ck_assert_msg(figure.amount_vertex == 12, "wrong vertexes amount parsed");
-  ck_assert_msg(figure.amount_polygon == 20, "wrong vertexes amount parsed");
+  ck_assert_msg(figure.amount_polygon == 20, "wrong polygon amount parsed");
 
   ck_assert_msg(figure.vertex[0 + 0] == 0, "wrong first line vertex value [0]");
   ck_assert_msg(figure.vertex[0 + 1] == -0.525731,
@@ -226,7 +226,7 @@ START_TEST(test_4) {
 
   ck_assert_msg(error == OK, "init failed");
   ck_assert_msg(figure.amount_vertex == 5, "wrong vertexes amount parsed");
-  ck_assert_msg(figure.amount_polygon == 6, "wrong vertexes amount parsed");
+  ck_assert_msg(figure.amount_polygon == 6, "wrong polygon amount parsed");
 
   ck_assert_msg(figure.vertex[0 + 0] == 0, "wrong first line vertex value [0]");
   ck_assert_msg(figure.vertex[0 + 1] == 0, "wrong first line vertex value [1]");
@@ -280,7 +280,7 @@ START_TEST(test_5) {
 
   ck_assert_msg(error == OK, "init failed");
   ck_assert_msg(figure.amount_vertex == 11908, "wrong vertexes amount parsed");
-  ck_assert_msg(figure.amount_polygon == 11362, "wrong vertexes amount parsed");
+  ck_assert_msg(figure.amount_polygon == 11362, "wrong polygon amount parsed");
 
   ck_assert_msg(figure.vertex[0 + 0] == 9.804816,
                 "wrong first line vertex value [0]");
@@ -342,7 +342,7 @@ START_TEST(test_6) {
 
   ck_assert_msg(error == OK, "init failed");
   ck_assert_msg(figure.amount_vertex == 0, "wrong vertexes amount parsed");
-  ck_assert_msg(figure.amount_polygon == 0, "wrong vertexes amount parsed");
+  ck_assert_msg(figure.amount_polygon == 0, "wrong polygon amount parsed");
 
   destroy_figure(&figure);
 }
@@ -357,7 +357,7 @@ START_TEST(test_7) {
 
   ck_assert_msg(error == OK, "init failed");
   ck_assert_msg(figure.amount_vertex == 0, "wrong vertexes amount parsed");
-  ck_assert_msg(figure.amount_polygon == 0, "wrong vertexes amount parsed");
+  ck_assert_msg(figure.amount_polygon == 0, "wrong polygon amount parsed");
 
   destroy_figure(&figure);
 }
@@ -372,7 +372,7 @@ START_TEST(test_8) {
 
   ck_assert_msg(error == OK, "init failed");
   ck_assert_msg(figure.amount_vertex == 0, "wrong vertexes amount parsed");
-  ck_assert_msg(figure.amount_polygon == 0, "wrong vertexes amount parsed");
+  ck_assert_msg(figure.amount_polygon == 0, "wrong polygon amount parsed");
 
   destroy_figure(&figure);
 }
@@ -387,7 +387,7 @@ START_TEST(test_9) {
 
   ck_assert_msg(error == OK, "init failed");
   ck_assert_msg(figure.amount_vertex == 0, "wrong vertexes amount parsed");
-  ck_assert_msg(figure.amount_polygon == 0, "wrong vertexes amount parsed");
+  ck_assert_msg(figure.amount_polygon == 0, "wrong polygon amount parsed");
 
   destroy_figure(&figure);
 }
@@ -402,7 +402,7 @@ START_TEST(test_10) {
 
   ck_assert_msg(error == OK, "init failed");
   ck_assert_msg(figure.amount_vertex == 2, "wrong vertexes amount parsed");
-  ck_assert_msg(figure.amount_polygon == 2, "wrong vertexes amount parsed");
+  ck_assert_msg(figure.amount_polygon == 2, "wrong polygon amount parsed");
 
   destroy_figure(&figure);
 }
@@ -417,7 +417,22 @@ START_TEST(test_11) {
 
   ck_assert_msg(error == OK, "init failed");
   ck_assert_msg(figure.amount_vertex == 0, "wrong vertexes amount parsed");
-  ck_assert_msg(figure.amount_polygon == 9, "wrong vertexes amount parsed");
+  ck_assert_msg(figure.amount_polygon == 9, "wrong polygon amount parsed");
+
+  destroy_figure(&figure);
+}
+END_TEST
+
+START_TEST(test_12) {
+  int error = OK;
+  Figure figure;
+  const char *file = "obj_files/tests_only/wr_test_7.obj";
+
+  error = parse_obj_file(file, &figure);
+
+  ck_assert_msg(error == OK, "init failed");
+  ck_assert_msg(figure.amount_vertex == 0, "wrong vertexes amount parsed");
+  ck_assert_msg(figure.amount_polygon == 3, "wrong polygon amount parsed");
 
   destroy_figure(&figure);
 }
@@ -439,6 +454,7 @@ Suite *test_parser(void) {
   tcase_add_test(tcase_core, test_9);
   tcase_add_test(tcase_core, test_10);
   tcase_add_test(tcase_core, test_11);
+  tcase_add_test(tcase_core, test_12);
 
   suite_add_tcase(suite, tcase_core);
 

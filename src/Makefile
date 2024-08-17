@@ -42,7 +42,7 @@ SOURCE_TEST = $(wildcard $(TEST_DIR)/*.c)
 .PHONY: all install uninstall cli desktop launch_cli test gcov_report clang_i clang_n cppcheck valgrind_cli valgrind_test rebuild clean dvi dist
 
 all:
-	$(CC) $(CFLAGS) main_test.c $(SOURCE_PARSER) $(SOURCE_TRANSFORM) -o $(PARSER) $(GFLAGS)
+	$(CCm) $(CFLAGS) main_test.c $(SOURCE_PARSER) $(SOURCE_TRANSFORM) -o $(PARSER) $(GFLAGS)
 	./$(PARSER)
 
 install: uninstall $(BUILD_DIR)
@@ -83,7 +83,7 @@ format_check:
 	@echo "checking format..."
 
 cppcheck:
-	cppcheck --enable=all --suppress=missingIncludeSystem --check-level=exhaustive $(PARSER_DIR)/* $(TRANSFORM_DIR)/* $(COMMON_DIR)/* $(TEST_DIR)/*
+	cppcheck --enable=all --suppress=missingIncludeSystem --check-level=exhaustive $(PARSER_DIR)/* $(TRANSFORM_DIR)/* $(COMMON_DIR)/* $(TEST_DIR)/* ./*
 
 valgrind:
 	valgrind -s -q --tool=memcheck --leak-check=yes --track-origins=yes --show-leak-kinds=all --verbose --log-file=valgrind_out.txt ./$(ARG)
