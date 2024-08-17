@@ -64,7 +64,7 @@ void fill_transformation_matrix(Figure* figure) {
 /// @brief Transposes a square matrix, result rewrites the original
 /// @param t_matrix
 void matrix_transpose(double** t_matrix) {
-  double temp = 0;
+  double temp;
   for (int i = 0; i < 4; ++i) {
     for (int j = i + 1; j < 4; ++j) {
       temp = t_matrix[i][j];

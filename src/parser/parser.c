@@ -5,7 +5,7 @@
 int parse_vertex(char* line, Figure* figure);
 int fill_correct_vertex(Figure* figure, double _x, double _y, double _z);
 int parse_polygon(char* line, Figure* figure);
-void remove_comment(char* line);
+void remove_comment(const char* line);
 int has_wrong_pattern(int* prev_pattern, int cur_pattern);
 int fill_vertex_p(Figure* figure, int* signal_to_fill, int v);
 
@@ -38,7 +38,7 @@ int parse_obj_file(const char* filename, Figure* figure) {
 
 /// @brief if a line consists of a comment - removes comment
 /// @param line file line as a string
-void remove_comment(char* line) {
+void remove_comment(const char* line) {
   char* comment = strchr(line, '#');
   if (comment) *comment = '\0';
 }
@@ -50,7 +50,7 @@ void remove_comment(char* line) {
 int parse_vertex(char* line, Figure* figure) {
   int error = OK, signal_to_fill = 0, num_token = 0;
   double _x, _y, _z;
-  char* token = NULL;
+  const char* token = NULL;
   token = strtok(line, " ");
 
   while (token != NULL && signal_to_fill != -1) {
@@ -125,13 +125,13 @@ int fill_correct_vertex(Figure* figure, double _x, double _y, double _z) {
 /// @param figure pointer to structure of type Figure
 /// @return error code: 1 = error; 0 = OK
 int parse_polygon(char* line, Figure* figure) {
-  int error = OK, v = 0, signal_to_fill = 0;
+  int error = OK, v, signal_to_fill = 0;
 
   error = realloc_polygon(figure);
 
-  char* token = NULL;
+  const char* token = NULL;
   token = strtok(line, " ");
-  int num_token = 0, prev_pattern = -1, pattern = 0;
+  int num_token = 0, prev_pattern = -1, pattern;
   while (token != NULL && !error && signal_to_fill != -1) {
     signal_to_fill = 0;
     char* endptr;
@@ -146,7 +146,7 @@ int parse_polygon(char* line, Figure* figure) {
         int countdash = 0;
         while (*endptr == '/' && errno == 0 && countdash <= 2) {
           pattern += 1;
-          char* ptr = NULL;
+          const char* ptr = NULL;
           if (*(endptr + 1) == '/') {
             pattern = 3;
             ptr = endptr + 2;

@@ -205,7 +205,7 @@ START_TEST(test_3) {
   ck_assert_msg(
       figure.polygon[figure.amount_polygon - 1]
               .vertex_p[figure.polygon[figure.amount_polygon - 1].amount_p -
-                        2] == 1 - 1,
+                        2] == 0,
       "wrong polygon value [last][last - 1]");
   ck_assert_msg(
       figure.polygon[figure.amount_polygon - 1]
