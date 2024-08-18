@@ -3,26 +3,17 @@
 Viewer::Viewer(QWidget *parent) : QOpenGLWidget(parent) {
   setWindowTitle("3dViewer");
   new_data = new Figure();
-  parse_obj_file("./obj_files/3dviewer.obj", new_data);
-  align_to_center(new_data);
-  std::vector<double> values{new_data->x_min, new_data->y_min, new_data->z_min,
-                             new_data->x_max, new_data->y_max, new_data->z_max};
-  const auto [min, max] = std::minmax_element(begin(values), end(values));
-  move_coef = *max - *min;
+  loadModel(start_file);
 }
 
 void Viewer::loadModel(QString filename) {
   destroy_figure(new_data);
-  delete new_data;
-  new_data = new Figure();
-
   parse_obj_file(filename.toUtf8().constData(), new_data);
-
   align_to_center(new_data);
   std::vector<double> values{new_data->x_min, new_data->y_min, new_data->z_min,
                              new_data->x_max, new_data->y_max, new_data->z_max};
   const auto [min, max] = std::minmax_element(begin(values), end(values));
-  move_coef = (*max - *min) * 2;
+  move_coef = (*max - *min) * 1.4;
   update();
 }
 
@@ -64,7 +55,7 @@ void Viewer::paintGL() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  glFrustum(-1, 1, -1, 1, 1, move_coef);
+  glFrustum(-1, 1, -1, 1, 1, move_coef * 8);
   glTranslatef(0, 0, -move_coef / 2);
   glEnableClientState(GL_VERTEX_ARRAY);
 
