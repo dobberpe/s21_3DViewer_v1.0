@@ -4,10 +4,9 @@ main_window::main_window(QWidget *parent)
     : QMainWindow(parent) {
 
     setWindowTitle("3dViewer");
-    setFixedSize(800, 600);
+    setMinimumSize(800, 600);
 
     v = new Viewer;
-    v->setMinimumSize(600, 600);
 
     rotationXSlider = new QSlider(Qt::Horizontal);
     rotationXSlider->setRange(-180, 180);
@@ -122,14 +121,16 @@ void main_window::move_slider(double move_X, double move_Y, double move_Z) {
 }
 
 void main_window::arrange_objects() {
-    layout = new QGridLayout;
-    layout->addWidget(v, 0, 0, 9, 1);
-    layout->addWidget(loadButton, 0, 1);
-    layout->addWidget(rotationXSlider, 1, 1);
-    layout->addWidget(rotationYSlider, 2, 1);
-    layout->addWidget(rotationZSlider, 3, 1);
-    layout->addWidget(moveXSlider, 4, 1);
-    layout->addWidget(moveYSlider, 5, 1);
-    layout->addWidget(moveZSlider, 6, 1);
-    layout->addWidget(scaleSlider, 7, 1);
+    mainLayout = new QGridLayout;
+    mainLayout->setColumnStretch(0, 8);
+    mainLayout->setColumnStretch(1, 2);
+    mainLayout->addWidget(v, 0, 0, 9, 1);
+    mainLayout->addWidget(loadButton, 0, 1);
+    mainLayout->addWidget(rotationXSlider, 1, 1);
+    mainLayout->addWidget(rotationYSlider, 2, 1);
+    mainLayout->addWidget(rotationZSlider, 3, 1);
+    mainLayout->addWidget(moveXSlider, 4, 1);
+    mainLayout->addWidget(moveYSlider, 5, 1);
+    mainLayout->addWidget(moveZSlider, 6, 1);
+    mainLayout->addWidget(scaleSlider, 7, 1);
 }

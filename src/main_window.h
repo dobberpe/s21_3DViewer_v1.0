@@ -42,7 +42,7 @@ private:
     QSlider *moveYSlider;
     QSlider *moveZSlider;
     QSlider *scaleSlider;
-    QGridLayout *layout;
+    QGridLayout *mainLayout;
     QWidget *centralWidget;
 
     int curr_moveX = 0;
