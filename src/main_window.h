@@ -27,6 +27,8 @@ class main_window : public QMainWindow {
   void on_moveYSlider_valueChanged(int value);
   void on_moveZSlider_valueChanged(int value);
   void on_scaleSlider_valueChanged(int value);
+  void on_increaseScaleButton_clicked();
+  void on_decreaseScaleButton_clicked();
   void on_screenshotButton_clicked();
 
  private:
@@ -46,6 +48,8 @@ class main_window : public QMainWindow {
   QSlider *moveYSlider;
   QSlider *moveZSlider;
   QSlider *scaleSlider;
+  QPushButton *increaseScaleButton;
+  QPushButton *decreaseScaleButton;
   QPushButton *screenshotButton;
 
   int curr_moveX = 0;

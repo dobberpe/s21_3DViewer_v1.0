@@ -45,6 +45,16 @@ main_window::main_window(QWidget *parent) : QMainWindow(parent) {
   connect(scaleSlider, &QSlider::valueChanged, this,
           &main_window::on_scaleSlider_valueChanged);
 
+  increaseScaleButton = new QPushButton("+");
+  increaseScaleButton->setFixedSize(QSize(20, 20));
+  connect(increaseScaleButton, &QPushButton::clicked, this,
+          &main_window::on_increaseScaleButton_clicked);
+
+  decreaseScaleButton = new QPushButton("-");
+  decreaseScaleButton->setFixedSize(QSize(20, 20));
+  connect(decreaseScaleButton, &QPushButton::clicked, this,
+          &main_window::on_decreaseScaleButton_clicked);
+
   screenshotButton = new QPushButton("Сделать снимок");
   connect(screenshotButton, &QPushButton::clicked, this,
           &main_window::on_screenshotButton_clicked);
@@ -111,6 +121,14 @@ void main_window::on_scaleSlider_valueChanged(int value) {
   v->update();
 }
 
+void main_window::on_increaseScaleButton_clicked() {
+  scaleSlider->setValue(scaleSlider->value() + 1);
+}
+
+void main_window::on_decreaseScaleButton_clicked() {
+  scaleSlider->setValue(scaleSlider->value() - 1);
+}
+
 void main_window::on_screenshotButton_clicked() {
   // Создание QPixmap для захвата виджета
   QPixmap pixmap(v->size());
@@ -149,6 +167,10 @@ void main_window::setupUI() {
   mainLayout->addWidget(v, 0, 0, 1, 1);  // Занимает весь левый столбец
 
   QLabel *scaleLabel = new QLabel("Масштабирование");
+  QHBoxLayout *scaleLayout = new QHBoxLayout;
+  scaleLayout->addWidget(decreaseScaleButton);
+  scaleLayout->addWidget(scaleSlider);
+  scaleLayout->addWidget(increaseScaleButton);
 
   // Компоновка для правого столбца
   QVBoxLayout *rightColumnLayout = new QVBoxLayout;
@@ -156,7 +178,7 @@ void main_window::setupUI() {
   setupSliderBox(rightColumnLayout, ROTATE);
   setupSliderBox(rightColumnLayout, MOVE);
   rightColumnLayout->addWidget(scaleLabel);
-  rightColumnLayout->addWidget(scaleSlider);
+  rightColumnLayout->addLayout(scaleLayout);
   rightColumnLayout->addWidget(screenshotButton);
 
   QSpacerItem *spacer =
