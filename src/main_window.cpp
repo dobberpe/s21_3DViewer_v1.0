@@ -8,6 +8,9 @@ main_window::main_window(QWidget *parent)
 
     v = new Viewer;
 
+    loadButton = new QPushButton("Выбор файла");
+    connect(loadButton, &QPushButton::clicked, this, &main_window::on_loadButton_clicked);
+
     rotationXSlider = new QSlider(Qt::Horizontal);
     rotationXSlider->setRange(-180, 180);
     connect(rotationXSlider, &QSlider::valueChanged, this, &main_window::on_rotationXSlider_valueChanged);
@@ -36,14 +39,10 @@ main_window::main_window(QWidget *parent)
     scaleSlider->setRange(-180, 180);
     connect(scaleSlider, &QSlider::valueChanged, this, &main_window::on_scaleSlider_valueChanged);
 
-    loadButton = new QPushButton("Load Model");
-    connect(loadButton, &QPushButton::clicked, this, &main_window::on_loadButton_clicked);
+    screenshotButton = new QPushButton("Сделать снимок");
+    connect(screenshotButton, &QPushButton::clicked, this, &main_window::on_screenshotButton_clicked);
 
-    arrange_objects();
-
-    centralWidget = new QWidget;
-    centralWidget->setLayout(layout);
-    setCentralWidget(centralWidget);
+    setupUI();
 }
 
 void main_window::on_loadButton_clicked() {
@@ -104,6 +103,18 @@ void main_window::on_scaleSlider_valueChanged(int value) {
     v->update();
 }
 
+void main_window::on_screenshotButton_clicked() {
+    // Создание QPixmap для захвата виджета
+    QPixmap pixmap(v->size());
+    v->render(&pixmap);
+
+    // Открытие диалогового окна для сохранения файла
+    QString fileName = QFileDialog::getSaveFileName(this, "Сохранение изображения", "", "PNG Files (*.png)");
+    if (!fileName.isEmpty()) {
+        pixmap.save(fileName, "PNG");
+    }
+}
+
 void main_window::rotate_slider(double rotate_X, double rotate_Y, double rotate_Z) {
     v->new_data->alpha_x = rotate_X;
     v->new_data->alpha_y = rotate_Y;
@@ -120,17 +131,90 @@ void main_window::move_slider(double move_X, double move_Y, double move_Z) {
     v->update();
 }
 
-void main_window::arrange_objects() {
-    mainLayout = new QGridLayout;
+void main_window::setupUI() {
+    QWidget *centralWidget = new QWidget(this);
+    setCentralWidget(centralWidget);
+
+    QGridLayout *mainLayout = new QGridLayout(centralWidget);
+    mainLayout->addWidget(v, 0, 0, 1, 1); // Занимает весь левый столбец
+
+    // компоновка слайдеров вращения
+    QLabel *rotationLabel = new QLabel("Поворот");
+
+    QLabel *rxLabel = new QLabel("x:");
+    QHBoxLayout *rXSliderLayout = new QHBoxLayout;
+    rXSliderLayout->addWidget(rxLabel);
+    rXSliderLayout->addWidget(rotationXSlider);
+
+    QLabel *ryLabel = new QLabel("y:");
+    QHBoxLayout *rYSliderLayout = new QHBoxLayout;
+    rYSliderLayout->addWidget(ryLabel);
+    rYSliderLayout->addWidget(rotationYSlider);
+
+    QLabel *rzLabel = new QLabel("z:");
+    QHBoxLayout *rZSliderLayout = new QHBoxLayout;
+    rZSliderLayout->addWidget(rzLabel);
+    rZSliderLayout->addWidget(rotationZSlider);
+
+    QVBoxLayout *rotationLayout = new QVBoxLayout;
+    rotationLayout->addWidget(rotationLabel);
+    rotationLayout->addLayout(rXSliderLayout);
+    rotationLayout->addLayout(rYSliderLayout);
+    rotationLayout->addLayout(rZSliderLayout);
+
+    QFrame *rotationFrame = new QFrame;
+    rotationFrame->setFrameShape(QFrame::Box);
+    rotationFrame->setLineWidth(1);
+    rotationFrame->setLayout(rotationLayout);
+
+    // компоновка слайдеров перемещения
+    QLabel *moveLabel = new QLabel("Перемещение");
+
+    QLabel *mxLabel = new QLabel("x:");
+    QHBoxLayout *mXSliderLayout = new QHBoxLayout;
+    mXSliderLayout->addWidget(mxLabel);
+    mXSliderLayout->addWidget(moveXSlider);
+
+    QLabel *myLabel = new QLabel("y:");
+    QHBoxLayout *mYSliderLayout = new QHBoxLayout;
+    mYSliderLayout->addWidget(myLabel);
+    mYSliderLayout->addWidget(moveYSlider);
+
+    QLabel *mzLabel = new QLabel("z:");
+    QHBoxLayout *mZSliderLayout = new QHBoxLayout;
+    mZSliderLayout->addWidget(mzLabel);
+    mZSliderLayout->addWidget(moveZSlider);
+
+    QVBoxLayout *moveLayout = new QVBoxLayout;
+    moveLayout->addWidget(moveLabel);
+    moveLayout->addLayout(mXSliderLayout);
+    moveLayout->addLayout(mYSliderLayout);
+    moveLayout->addLayout(mZSliderLayout);
+
+    QFrame *moveFrame = new QFrame;
+    moveFrame->setFrameShape(QFrame::Box);
+    moveFrame->setLineWidth(1);
+    moveFrame->setLayout(moveLayout);
+
+    // Слайдер масштабирования
+    QLabel *scaleLabel = new QLabel("Масштабирование");
+
+    // Компоновка для правого столбца
+    QVBoxLayout *rightColumnLayout = new QVBoxLayout;
+    rightColumnLayout->addWidget(loadButton);
+    rightColumnLayout->addWidget(rotationFrame);
+    rightColumnLayout->addWidget(moveFrame);
+    rightColumnLayout->addWidget(scaleLabel);
+    rightColumnLayout->addWidget(scaleSlider);
+    rightColumnLayout->addWidget(screenshotButton);
+
+    QSpacerItem *spacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
+    rightColumnLayout->addItem(spacer);
+
+    // Добавляем правый столбец в компоновку
+    mainLayout->addLayout(rightColumnLayout, 0, 1);
+
+    // Устанавливаем вес столбцов
     mainLayout->setColumnStretch(0, 8);
     mainLayout->setColumnStretch(1, 2);
-    mainLayout->addWidget(v, 0, 0, 9, 1);
-    mainLayout->addWidget(loadButton, 0, 1);
-    mainLayout->addWidget(rotationXSlider, 1, 1);
-    mainLayout->addWidget(rotationYSlider, 2, 1);
-    mainLayout->addWidget(rotationZSlider, 3, 1);
-    mainLayout->addWidget(moveXSlider, 4, 1);
-    mainLayout->addWidget(moveYSlider, 5, 1);
-    mainLayout->addWidget(moveZSlider, 6, 1);
-    mainLayout->addWidget(scaleSlider, 7, 1);
 }

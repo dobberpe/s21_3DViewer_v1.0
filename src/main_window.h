@@ -25,12 +25,13 @@ private slots:
     void on_moveYSlider_valueChanged(int value);
     void on_moveZSlider_valueChanged(int value);
     void on_scaleSlider_valueChanged(int value);
+    void on_screenshotButton_clicked();
 
 private:
     void rotate_slider(double rotate_X, double rotate_Y, double rotate_Z);
     void move_slider(double move_X, double move_Y, double move_Z);
     void scale_slider(double scale);
-    void arrange_objects();
+    void setupUI();
 
     Viewer *v;
 
@@ -42,8 +43,7 @@ private:
     QSlider *moveYSlider;
     QSlider *moveZSlider;
     QSlider *scaleSlider;
-    QGridLayout *mainLayout;
-    QWidget *centralWidget;
+    QPushButton *screenshotButton;
 
     int curr_moveX = 0;
     int curr_moveY = 0;
