@@ -5,11 +5,7 @@
 #include <QOpenGLFunctions>
 #include <QOpenGLWidget>
 #include <QWheelEvent>
-#include <QWidget>
 #include <QtOpenGL>
-#include <algorithm>
-#include <fstream>
-#include <iostream>
 
 extern "C" {
 #include "../common/common.h"
