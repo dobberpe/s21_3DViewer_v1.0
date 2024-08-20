@@ -41,9 +41,8 @@ SOURCE_TEST = $(wildcard $(TEST_DIR)/*.c)
 #================================= MAIN TARGETS ===============================#
 .PHONY: all install uninstall cli desktop launch_cli test gcov_report clang_i clang_n cppcheck valgrind_cli valgrind_test rebuild clean dvi dist
 
-all:
-	$(CC) $(CFLAGS) main_test.c $(SOURCE_PARSER) $(SOURCE_TRANSFORM) -o $(PARSER) $(GFLAGS)
-	./$(PARSER)
+all: clean install
+	open $(BUILD_DIR)/gr.app
 
 install: uninstall $(BUILD_DIR)
 	@echo "installing process started..."
