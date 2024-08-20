@@ -7,6 +7,7 @@
 #include <QPushButton>
 #include <QSlider>
 #include <QVBoxLayout>
+#include <QTimer>
 
 #include "graphics/graphics.h"
 
@@ -30,12 +31,16 @@ class main_window : public QMainWindow {
   void on_increaseScaleButton_clicked();
   void on_decreaseScaleButton_clicked();
   void on_screenshotButton_clicked();
+  void on_gifButton_clicked();
+  void on_timer_timeout();
 
  private:
+  void saveGif(const QString& fileName, const int delayMs);
   void rotate_slider(double rotate_X, double rotate_Y, double rotate_Z);
   void move_slider(double move_X, double move_Y, double move_Z);
   void scale_slider(double scale);
   void setupUI();
+  void setupFileInfo(QVBoxLayout *rightColumnLayout);
   void setupSliderBox(QVBoxLayout *rightColumnLayout, bool rotate);
 
   Viewer *v;
@@ -51,6 +56,16 @@ class main_window : public QMainWindow {
   QPushButton *increaseScaleButton;
   QPushButton *decreaseScaleButton;
   QPushButton *screenshotButton;
+  QPushButton *gifButton;
+  QTimer *timer;
+
+  const int width = 640;
+  const int height = 480;
+  const int fps = 10;
+  const int duration = 5;
+  const int totalFrames = fps * duration;
+  int currentFrame = 0;
+  QList<QImage> capturedFrames;
 
   int curr_moveX = 0;
   int curr_moveY = 0;
@@ -59,6 +74,7 @@ class main_window : public QMainWindow {
   int curr_rotateY = 0;
   int curr_rotateZ = 0;
   int curr_scale = 0;
+  QString fname = QString("3dviewer.obj");
  signals:
 };
 

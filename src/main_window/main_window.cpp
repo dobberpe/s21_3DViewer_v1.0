@@ -55,17 +55,25 @@ main_window::main_window(QWidget *parent) : QMainWindow(parent) {
   connect(decreaseScaleButton, &QPushButton::clicked, this,
           &main_window::on_decreaseScaleButton_clicked);
 
-  screenshotButton = new QPushButton("Сделать снимок");
+  screenshotButton = new QPushButton("Снимок экрана");
   connect(screenshotButton, &QPushButton::clicked, this,
           &main_window::on_screenshotButton_clicked);
 
+  gifButton = new QPushButton("Запись экрана");
+  connect(gifButton, &QPushButton::clicked, this,
+          &main_window::on_gifButton_clicked);
+
   setupUI();
+
+  timer = new QTimer(this);
+  connect(timer, &QTimer::timeout, this, &main_window::on_timer_timeout);
 }
 
 void main_window::on_loadButton_clicked() {
   QString fileName = QFileDialog::getOpenFileName(this, "Open Model File", "",
                                                   "OBJ Files (*.obj)");
   if (!fileName.isEmpty()) {
+    fname = fileName;
     rotationXSlider->setValue(0);
     rotationYSlider->setValue(0);
     rotationZSlider->setValue(0);
@@ -130,16 +138,126 @@ void main_window::on_decreaseScaleButton_clicked() {
 }
 
 void main_window::on_screenshotButton_clicked() {
-  // Создание QPixmap для захвата виджета
-  QPixmap pixmap(v->size());
-  v->render(&pixmap);
+    // Создание QPixmap для захвата виджета viewer
+    QPixmap pixmap(v->size());
+    v->render(&pixmap);
 
-  // Открытие диалогового окна для сохранения файла
-  QString fileName = QFileDialog::getSaveFileName(
-      this, "Сохранение изображения", "", "PNG Files (*.png)");
-  if (!fileName.isEmpty()) {
-    pixmap.save(fileName, "PNG");
-  }
+    QStringList filters;
+    filters << "JPEG Files (*.jpg)" << "BMP Files (*.bmp)";
+
+    QFileDialog dialog(this);
+    dialog.setNameFilters(filters);
+
+    QString fileName;
+    if (dialog.exec()) {
+        fileName = dialog.selectedFiles().first();
+        QString selectedFilter = dialog.selectedNameFilter();
+
+        // Определяем формат в зависимости от выбранного фильтра
+        QString format;
+        if (selectedFilter.contains("*.jpg")) {
+            format = "JPEG";
+        } else if (selectedFilter.contains("*.bmp")) {
+            format = "BMP";
+        }
+
+        // Сохранение файла
+        if (!fileName.isEmpty()) {
+            pixmap.save(fileName, format.toUtf8().constData());
+        }
+    }
+}
+
+void main_window::on_gifButton_clicked() {
+    qDebug() << "entered";
+
+    if (!timer->isActive()) {
+        timer->start(100);
+        qDebug() << "start";
+    }
+}
+
+void main_window::on_timer_timeout() {
+    if (currentFrame < totalFrames) {
+        QPixmap pixmap(v->size());
+        v->render(&pixmap);
+        qDebug() << "render";
+        QImage scaledImage = pixmap.scaled(width, height, Qt::KeepAspectRatio).toImage();
+        qDebug() << "scaled";
+        capturedFrames.append(scaledImage);
+        qDebug() << "append";
+        currentFrame++;
+        qDebug() << currentFrame;
+    } else {
+        qDebug() << "total " << totalFrames;
+        timer->stop();
+        currentFrame = 0;
+        qDebug() << "Captured all frames, now saving GIF";
+        QString fileName = QFileDialog::getSaveFileName(nullptr, "Сохранение GIF", "", "GIF Files (*.gif)");
+        if (!fileName.isEmpty()) {
+            qDebug() << "fname";
+            saveGif(fileName, 100); // Сохраняем GIF
+            qDebug() << "saved";
+        }
+        capturedFrames.clear();
+    }
+}
+
+void main_window::saveGif(const QString& fileName, const int delayMs) {
+    QFile file(fileName);
+    if (!file.open(QIODevice::WriteOnly)) {
+        qWarning() << "Failed to open file for writing:" << fileName;
+        return;
+    }
+
+    QDataStream out(&file);
+    out.setByteOrder(QDataStream::LittleEndian);
+
+    // GIF Header
+    out.writeRawData("GIF89a", 6); // Signature and version
+
+    // Logical Screen Descriptor
+    out << static_cast<quint16>(width); // Ширина
+    out << static_cast<quint16>(height); // Высота
+    out << static_cast<quint8>(0xF7); // Global Color Table Flag, Color Resolution, and Sort Flag
+    out << static_cast<quint8>(0);    // Background Color Index
+    out << static_cast<quint8>(0);    // Pixel Aspect Ratio
+
+    // Global Color Table (черно-белая палитра для простоты)
+    out << static_cast<quint8>(0x00); // Черный
+    out << static_cast<quint8>(0x00); // Черный
+    out << static_cast<quint8>(0x00); // Черный
+    out << static_cast<quint8>(0xFF); // Белый
+    out << static_cast<quint8>(0xFF); // Белый
+    out << static_cast<quint8>(0xFF); // Белый
+
+    for (const QImage &image : capturedFrames) {
+        // Graphics Control Extension
+        out.writeRawData("\x21\xF9\x04", 3); // Extension Introducer, Graphics Control Label
+        out << static_cast<quint8>(0);    // No Transparency, Disposal Method 0
+        out << static_cast<quint16>(delayMs / 10); // Delay Time (in hundredths of a second)
+        out << static_cast<quint8>(0);    // Transparent Color Index (none)
+        out.writeRawData("\x00", 1);      // Block Terminator
+
+        // Image Descriptor
+        out.writeRawData("\x2C", 1); // Image Separator
+        out << static_cast<quint16>(0); // Image Left Position
+        out << static_cast<quint16>(0); // Image Top Position
+        out << static_cast<quint16>(width); // Image Width
+        out << static_cast<quint16>(height); // Image Height
+        out << static_cast<quint8>(0);    // Local Color Table Flag, Interlace Flag, Sort Flag
+
+        // Image Data
+        QBuffer buffer;
+        buffer.open(QIODevice::WriteOnly);
+        image.save(&buffer, "BMP"); // Конвертируем кадр в BMP для простоты
+        out.writeRawData(buffer.data().data(), buffer.size());
+    }
+
+    // GIF Trailer
+    out.writeRawData("\x3B", 1); // GIF Trailer
+
+    file.close();
 }
 
 void main_window::rotate_slider(double rotate_X, double rotate_Y,
@@ -172,6 +290,9 @@ void main_window::setupUI() {
   scaleLayout->addWidget(scaleSlider);
   scaleLayout->addWidget(increaseScaleButton);
 
+  QSpacerItem *spacer =
+      new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
+
   // Компоновка для правого столбца
   QVBoxLayout *rightColumnLayout = new QVBoxLayout;
   rightColumnLayout->addWidget(loadButton);
@@ -180,10 +301,9 @@ void main_window::setupUI() {
   rightColumnLayout->addWidget(scaleLabel);
   rightColumnLayout->addLayout(scaleLayout);
   rightColumnLayout->addWidget(screenshotButton);
-
-  QSpacerItem *spacer =
-      new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
+  rightColumnLayout->addWidget(gifButton);
   rightColumnLayout->addItem(spacer);
+  setupFileInfo(rightColumnLayout);
 
   // Добавляем правый столбец в компоновку
   mainLayout->addLayout(rightColumnLayout, 0, 1);
@@ -223,4 +343,48 @@ void main_window::setupSliderBox(QVBoxLayout *rightColumnLayout, bool rotate) {
   frame->setLayout(layout);
 
   rightColumnLayout->addWidget(frame);
+}
+
+void main_window::setupFileInfo(QVBoxLayout *rightColumnLayout) {
+    QLabel *filenameLabel = new QLabel("Имя файла:");
+    QSpacerItem *fnameSpacer =
+        new QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+    QLabel *fnameLabel = new QLabel(fname);
+
+    QHBoxLayout *fnameLayout = new QHBoxLayout;
+    fnameLayout->addWidget(filenameLabel);
+    fnameLayout->addItem(fnameSpacer);
+    fnameLayout->addWidget(fnameLabel);
+
+    QLabel *amountVLabel = new QLabel("Вершин:");
+    QSpacerItem *amountVSpacer =
+        new QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+    QLabel *amountVnumberLabel = new QLabel(QString::number(v->new_data->amount_vertex));
+
+    QHBoxLayout *amountVLayout = new QHBoxLayout;
+    amountVLayout->addWidget(amountVLabel);
+    amountVLayout->addItem(amountVSpacer);
+    amountVLayout->addWidget(amountVnumberLabel);
+
+    QLabel *amountPLabel = new QLabel("Ребер:");
+    QSpacerItem *amountPSpacer =
+        new QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+    QLabel *amountPnumberLabel = new QLabel(QString::number(v->new_data->amount_polygon));
+
+    QHBoxLayout *amountPLayout = new QHBoxLayout;
+    amountPLayout->addWidget(amountPLabel);
+    amountPLayout->addItem(amountPSpacer);
+    amountPLayout->addWidget(amountPnumberLabel);
+
+    QVBoxLayout *fileinfoLayout = new QVBoxLayout;
+    fileinfoLayout->addLayout(fnameLayout);
+    fileinfoLayout->addLayout(amountVLayout);
+    fileinfoLayout->addLayout(amountPLayout);
+
+    QFrame *frame = new QFrame;
+    frame->setFrameShape(QFrame::Box);
+    frame->setLineWidth(1);
+    frame->setLayout(fileinfoLayout);
+
+    rightColumnLayout->addWidget(frame);
 }
