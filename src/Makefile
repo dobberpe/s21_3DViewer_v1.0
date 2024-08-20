@@ -30,6 +30,7 @@ TRANSFORM_DIR = transformations
 COMMON_DIR = common
 TEST_DIR = tests
 DVI_DIR = docs
+DIST_DIR = distribution
 #==============================================================================#
 
 #====================== LIST OF FILE AND DIRS IN MODULES ======================#
@@ -99,7 +100,7 @@ valgrind_tests: clean
 rebuild: uninstall install
 
 clean:
-	@rm -rf *.gcno *.gcda *.info report $(PARSER) $(TEST) *.dSYM dist a.out $(BUILD_DIR) $(DVI_DIR)
+	@rm -rf *.gcno *.gcda *.info report $(PARSER) $(TEST) *.dSYM dist a.out $(BUILD_DIR) $(DVI_DIR) $(DIST_DIR)
 	@echo "cleaning...\n"
 
 dvi:
@@ -112,11 +113,17 @@ ifeq ($(UNAME), Darwin)
 	open $(DVI_DIR)/html/index.html
 endif
 
-dist:
-	
+dist: clean $(DIST_DIR)
+	@echo "Creating a distribution..."
+	@echo "Distribution packaging..."
+	@tar --exclude='./tests' --exclude='./$(DIST_DIR)' --exclude='./build' -czf $(DIST_DIR)/3dviewer_v1.0.tar.gz -C ./ .
+	@echo "Distribution created"
+
 #==============================================================================#
 
 #============================== CREATE DIRECTORIES ============================#
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
+$(DIST_DIR):
+	mkdir -p $(DIST_DIR)
 #==============================================================================#
