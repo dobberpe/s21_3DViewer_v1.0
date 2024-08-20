@@ -45,10 +45,12 @@ all:
 	$(CC) $(CFLAGS) main_test.c $(SOURCE_PARSER) $(SOURCE_TRANSFORM) -o $(PARSER) $(GFLAGS)
 	./$(PARSER)
 
-install: $(BUILD_DIR)
+install: uninstall $(BUILD_DIR)
 	@echo "installing process started..."
 	@qmake gr.pro -o $(BUILD_DIR)
 	@make -C $(BUILD_DIR)
+	@rm -rf $(BUILD_DIR)/*o $(BUILD_DIR)/*h $(BUILD_DIR)/*cpp $(BUILD_DIR)/Makefile
+	@echo "successfuly installed"
 
 uninstall:
 	@rm -rf $(BUILD_DIR)
@@ -81,7 +83,7 @@ format_check:
 	@echo "checking format..."
 
 cppcheck:
-	cppcheck --enable=all --suppress=missingIncludeSystem --check-level=exhaustive $(PARSER_DIR)/* $(TRANSFORM_DIR)/* $(COMMON_DIR)/* $(TEST_DIR)/*
+	cppcheck --enable=all --suppress=missingIncludeSystem $(PARSER_DIR)/* $(TRANSFORM_DIR)/* $(COMMON_DIR)/* $(TEST_DIR)/* ./*cpp ./*h
 
 valgrind:
 	valgrind -s -q --tool=memcheck --leak-check=yes --track-origins=yes --show-leak-kinds=all --verbose --log-file=valgrind_out.txt ./$(ARG)

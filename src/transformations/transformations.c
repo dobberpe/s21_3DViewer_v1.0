@@ -1,5 +1,6 @@
 #include "transformations.h"
 
+#include <stdio.h>
 /// @brief Changes coordinates' values so, the figure center is 0,0,0 and max
 /// crd no more than 0.5
 /// @param figure
@@ -7,16 +8,10 @@ void align_to_center(Figure* figure) {
   double x_center = (figure->x_min + figure->x_max) / 2.0;
   double y_center = (figure->y_min + figure->y_max) / 2.0;
   double z_center = (figure->z_min + figure->z_max) / 2.0;
-  // double max_dist = max_(figure->x_max - x_center, figure->y_max - y_center,
-  //                        figure->z_max - z_center);
-  figure->cur_scale = INITIAL_SCALE;
   for (int i = 0; i < figure->amount_vertex; ++i) {
-    figure->vertex[i * 3 + x] =
-        (figure->vertex[i * 3 + x] - x_center) * figure->cur_scale;
-    figure->vertex[i * 3 + y] =
-        (figure->vertex[i * 3 + y] - y_center) * figure->cur_scale;
-    figure->vertex[i * 3 + z] =
-        (figure->vertex[i * 3 + z] - z_center) * figure->cur_scale;
+    figure->vertex[i * 3 + x] = (figure->vertex[i * 3 + x] - x_center);
+    figure->vertex[i * 3 + y] = (figure->vertex[i * 3 + y] - y_center);
+    figure->vertex[i * 3 + z] = (figure->vertex[i * 3 + z] - z_center);
   }
 }
 
@@ -63,7 +58,7 @@ void fill_transformation_matrix(Figure* figure) {
 /// @brief Transposes a square matrix, result rewrites the original
 /// @param t_matrix
 void matrix_transpose(double** t_matrix) {
-  double temp = 0;
+  double temp;
   for (int i = 0; i < 4; ++i) {
     for (int j = i + 1; j < 4; ++j) {
       temp = t_matrix[i][j];

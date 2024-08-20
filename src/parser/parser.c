@@ -1,11 +1,13 @@
 #include "parser.h"
 
+#include <errno.h>
+
 int parse_vertex(char* line, Figure* figure);
+int fill_correct_vertex(Figure* figure, double _x, double _y, double _z);
 int parse_polygon(char* line, Figure* figure);
-void remove_comment(char* line);
-void check_polygon_pattern(int* num_token, int* pattern, int current_pattern,
-                           int* signal_to_fill);
-int fill_vertex_p(Polygon* polygon, int value);
+void remove_comment(const char* line);
+int has_wrong_pattern(int* prev_pattern, int cur_pattern);
+int fill_vertex_p(Figure* figure, int* signal_to_fill, int v);
 
 /// @brief loops over a file line by line, detects and parses vertexes and
 /// polygons
@@ -13,6 +15,7 @@ int fill_vertex_p(Polygon* polygon, int value);
 /// @param figure pointer to structure of type Figure
 /// @return error code: 1 = error; 0 = OK
 int parse_obj_file(const char* filename, Figure* figure) {
+  setlocale(LC_NUMERIC, "C");
   init_figure(figure);
   int error = OK;
   FILE* file = fopen(filename, "r");
@@ -36,7 +39,7 @@ int parse_obj_file(const char* filename, Figure* figure) {
 
 /// @brief if a line consists of a comment - removes comment
 /// @param line file line as a string
-void remove_comment(char* line) {
+void remove_comment(const char* line) {
   char* comment = strchr(line, '#');
   if (comment) *comment = '\0';
 }
@@ -46,23 +49,32 @@ void remove_comment(char* line) {
 /// @param figure pointer to structure of type Figure
 /// @return error code: 1 = error; 0 = OK
 int parse_vertex(char* line, Figure* figure) {
-  int error = OK;
-  double _x, _y, _z, _w = 0;
-  int signal_to_fill = 0;
-
-  char* token = NULL;
+  int error = OK, signal_to_fill = 0, num_token = 0;
+  double _x = 0, _y = 0, _z = 0;
+  const char* token = NULL;
   token = strtok(line, " ");
-  int num_token = 0;
 
   while (token != NULL && signal_to_fill != -1) {
-    if (num_token == 1 && sscanf(token, "%lf", &_x) == 1) {
-      ++signal_to_fill;
-    } else if (num_token == 2 && sscanf(token, "%lf", &_y) == 1) {
-      ++signal_to_fill;
-    } else if (num_token == 3 && sscanf(token, "%lf", &_z) == 1) {
-      ++signal_to_fill;
-    } else if (num_token == 4 && sscanf(token, "%lf", &_w) == 1) {
-      ;
+    char* endptr;
+    errno = 0;
+    double value = strtod(token, &endptr);
+
+    if (endptr != token && errno == 0 &&
+        (*endptr == '\0' || *endptr == ' ' || *endptr == '\n')) {
+      if (num_token == 1) {
+        _x = value;
+        ++signal_to_fill;
+      } else if (num_token == 2) {
+        _y = value;
+        ++signal_to_fill;
+      } else if (num_token == 3) {
+        _z = value;
+        ++signal_to_fill;
+      } else if (num_token == 4) {
+        ;
+      } else if (num_token > 0) {
+        signal_to_fill = -1;
+      }
     } else if (num_token > 0) {
       signal_to_fill = -1;
     }
@@ -71,29 +83,40 @@ int parse_vertex(char* line, Figure* figure) {
   }
 
   if (signal_to_fill == 3) {
-    error = realloc_vertex(figure);
-    if (!error) {
-      figure->vertex[(figure->amount_vertex - 1) * 3 + x] = _x;
-      figure->vertex[(figure->amount_vertex - 1) * 3 + y] = _y;
-      figure->vertex[(figure->amount_vertex - 1) * 3 + z] = _z;
-      printf("%lf, %lf, %lf\n", _x, _y, _z);
-      
-      if (figure->amount_vertex == 1) {
-        // если первая строка
-        figure->x_max = figure->x_min = _x;
-        figure->y_max = figure->y_min = _y;
-        figure->z_max = figure->z_min = _z;
-      } else {
-        figure->x_max = _x > figure->x_max ? _x : figure->x_max;
-        figure->y_max = _y > figure->y_max ? _y : figure->y_max;
-        figure->z_max = _z > figure->z_max ? _z : figure->z_max;
-        figure->x_min = _x < figure->x_min ? _x : figure->x_min;
-        figure->y_min = _y < figure->y_min ? _y : figure->y_min;
-        figure->z_min = _z < figure->z_min ? _z : figure->z_min;
-      }
+    fill_correct_vertex(figure, _x, _y, _z);
+  }
+
+  return error;
+}
+
+/// @brief fills figure with the parsed values
+/// @param figure
+/// @param _x
+/// @param _y
+/// @param _z
+/// @return error code: 1 = error; 0 = OK
+int fill_correct_vertex(Figure* figure, double _x, double _y, double _z) {
+  int error = 0;
+  error = realloc_vertex(figure);
+  if (!error) {
+    figure->vertex[(figure->amount_vertex - 1) * 3 + x] = _x;
+    figure->vertex[(figure->amount_vertex - 1) * 3 + y] = _y;
+    figure->vertex[(figure->amount_vertex - 1) * 3 + z] = _z;
+
+    if (figure->amount_vertex == 1) {
+      figure->x_max = figure->x_min = _x;
+      figure->y_max = figure->y_min = _y;
+      figure->z_max = figure->z_min = _z;
     } else {
-      error = ERR;
+      figure->x_max = _x > figure->x_max ? _x : figure->x_max;
+      figure->y_max = _y > figure->y_max ? _y : figure->y_max;
+      figure->z_max = _z > figure->z_max ? _z : figure->z_max;
+      figure->x_min = _x < figure->x_min ? _x : figure->x_min;
+      figure->y_min = _y < figure->y_min ? _y : figure->y_min;
+      figure->z_min = _z < figure->z_min ? _z : figure->z_min;
     }
+  } else {
+    error = ERR;
   }
   return error;
 }
@@ -103,42 +126,47 @@ int parse_vertex(char* line, Figure* figure) {
 /// @param figure pointer to structure of type Figure
 /// @return error code: 1 = error; 0 = OK
 int parse_polygon(char* line, Figure* figure) {
-  int error = OK;
-  int v = 0, vt, vn, signal_to_fill = 0;
+  int error = OK, v, signal_to_fill = 0;
 
   error = realloc_polygon(figure);
 
-  char* token = NULL;
+  const char* token = NULL;
   token = strtok(line, " ");
-  int num_token = 0;
-  int pattern = 0;
-  while (token != NULL && !error && signal_to_fill != -1) {
+  int num_token = 0, prev_pattern = -1, pattern;
+  while (token != NULL && *token != '\n' && !error && signal_to_fill != -1) {
     signal_to_fill = 0;
+    char* endptr;
+    errno = 0;
+
     if (num_token) {
-      if (sscanf(token, "%d/%d/%d", &v, &vt, &vn) == 3) {
-        check_polygon_pattern(&num_token, &pattern, 1, &signal_to_fill);
-      } else if (sscanf(token, "%d/%d", &v, &vt) == 2) {
-        check_polygon_pattern(&num_token, &pattern, 2, &signal_to_fill);
-      } else if (sscanf(token, "%d//%d", &v, &vn) == 2) {
-        check_polygon_pattern(&num_token, &pattern, 3, &signal_to_fill);
-      } else if (sscanf(token, "%d", &v) == 1) {
-        check_polygon_pattern(&num_token, &pattern, 4, &signal_to_fill);
-      } else if (num_token) {
+      v = strtol(token, &endptr, 10);
+      pattern = 0;
+      if (endptr != token && errno == 0 &&
+          (*endptr == '\0' || *endptr == ' ' || *endptr == '\n' ||
+           *endptr == '/')) {
+        int countdash = 0;
+        while (*endptr == '/' && errno == 0 && countdash <= 2) {
+          pattern += 1;
+          const char* ptr = NULL;
+          if (*(endptr + 1) == '/') {
+            pattern = 3;
+            ptr = endptr + 2;
+          } else {
+            ptr = endptr + 1;
+          }
+          strtol(ptr, &endptr, 10);
+          ++countdash;
+        }
+        if (countdash > 2 || errno != 0 ||
+            has_wrong_pattern(&prev_pattern, pattern))
+          signal_to_fill = -1;
+        else {
+          signal_to_fill = 1;
+        }
+      } else {
         signal_to_fill = -1;
       }
-      if (v < 1) signal_to_fill = -1;
-      if (signal_to_fill == 1) {
-        error = realloc_vertex_p(&figure->polygon[figure->amount_polygon - 1]);
-        if (!error)
-          error = fill_vertex_p(&figure->polygon[figure->amount_polygon - 1],
-                                v - 1);
-        else
-          error = ERR;
-      } else if (signal_to_fill == -1) {
-        if (figure->polygon[figure->amount_polygon - 1].vertex_p)
-          free(figure->polygon[figure->amount_polygon - 1].vertex_p);
-        error = realloc_down_polygon(figure);
-      }
+      error = fill_vertex_p(figure, &signal_to_fill, v);
     }
     ++num_token;
     token = strtok(NULL, " ");
@@ -148,33 +176,53 @@ int parse_polygon(char* line, Figure* figure) {
   return error;
 }
 
+/// @brief fills polygon line in a format:
+/// point_1 point_2 point_2 point_3 point_3 point_1
+/// @param figure
+/// @param signal_to_fill
+/// @param v current parsed vertex
+/// @return error code: 1 = error; 0 = OK
+int fill_vertex_p(Figure* figure, int* signal_to_fill, int v) {
+  int error = OK;
+  if (v < 1) *signal_to_fill = -1;
+  if (*signal_to_fill == 1) {
+    error = realloc_vertex_p(&figure->polygon[figure->amount_polygon - 1]);
+    if (!error) {
+      if (figure->polygon[figure->amount_polygon - 1].amount_p - 1 != 0) {
+        figure->polygon[figure->amount_polygon - 1]
+            .vertex_p[figure->polygon[figure->amount_polygon - 1].amount_p -
+                      2] = v - 1;
+      }
+      figure->polygon[figure->amount_polygon - 1]
+          .vertex_p[figure->polygon[figure->amount_polygon - 1].amount_p - 1] =
+          v - 1;
+      error = realloc_vertex_p(&figure->polygon[figure->amount_polygon - 1]);
+      if (!error)
+        figure->polygon[figure->amount_polygon - 1]
+            .vertex_p[figure->polygon[figure->amount_polygon - 1].amount_p -
+                      1] =
+            figure->polygon[figure->amount_polygon - 1].vertex_p[0];
+    } else
+      error = ERR;
+  } else if (*signal_to_fill == -1) {
+    if (figure->polygon[figure->amount_polygon - 1].vertex_p)
+      free(figure->polygon[figure->amount_polygon - 1].vertex_p);
+    error = realloc_down_polygon(figure);
+  }
+  return error;
+}
+
 /// @brief checks if a current pattern is the same as general line pattern
 /// @param num_token number of processed token
 /// @param pattern polygon line pattern
 /// @param current_pattern pattern of a current token
 /// @param signal_to_fill
-void check_polygon_pattern(int* num_token, int* pattern, int current_pattern,
-                           int* signal_to_fill) {
-  if (*num_token > 1 && *pattern != current_pattern) {
-    *signal_to_fill -= 1;
+int has_wrong_pattern(int* prev_pattern, int cur_pattern) {
+  int is_pattern_wrong = 0;
+  if (*prev_pattern != -1 && *prev_pattern != cur_pattern) {
+    is_pattern_wrong = 1;
   } else {
-    *pattern = current_pattern;
-    *signal_to_fill += 1;
+    *prev_pattern = cur_pattern;
   }
-}
-
-/// @brief fills polygon line in a format:
-/// point_1 point_2 point_2 point_3 point_3 point_1
-/// @param polygon pointer to structure of type Polygon
-/// @param value int
-int fill_vertex_p(Polygon* polygon, int value) {
-  int error = OK;
-  if (polygon->amount_p - 1 != 0) {
-    polygon->vertex_p[polygon->amount_p - 2] = value;
-  }
-  polygon->vertex_p[polygon->amount_p - 1] = value;
-  error = realloc_vertex_p(polygon);
-  if (!error) polygon->vertex_p[polygon->amount_p - 1] = polygon->vertex_p[0];
-
-  return error;
+  return is_pattern_wrong;
 }
