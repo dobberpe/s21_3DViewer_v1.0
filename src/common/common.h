@@ -26,6 +26,7 @@ typedef struct Figure {
   int amount_vertex;
   Polygon *polygon;
   int amount_polygon;
+  int amount_polygon_edges;
   double x_max, y_max, z_max, x_min, y_min, z_min;
   double alpha_x, alpha_y, alpha_z;
   double cur_scale;
