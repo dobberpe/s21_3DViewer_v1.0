@@ -30,18 +30,6 @@ void scale_figure(Figure* figure, double scale) {
   }
 }
 
-/// @brief Finds max bw 3 values
-/// @param a
-/// @param b
-/// @param c
-/// @return max
-double max_(double a, double b, double c) {
-  double res = a;
-  if (b > res) res = b;
-  if (c > res) res = c;
-  return res;
-}
-
 /// @brief fills transformation matrix according to set move_vector values
 /// @param figure
 void fill_transformation_matrix(Figure* figure) {

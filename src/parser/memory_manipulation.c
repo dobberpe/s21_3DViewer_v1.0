@@ -20,9 +20,9 @@ int init_figure(Figure* figure) {
   figure->trv.rotation_matrix_y = NULL;
   figure->trv.rotation_matrix_z = NULL;
   error = malloc_matrix(&figure->trv.tranformation_matrix, 4);
-  error = malloc_matrix(&figure->trv.rotation_matrix_x, 3);
-  error = malloc_matrix(&figure->trv.rotation_matrix_y, 3);
-  error = malloc_matrix(&figure->trv.rotation_matrix_z, 3);
+  if (!error) error = malloc_matrix(&figure->trv.rotation_matrix_x, 3);
+  if (!error) error = malloc_matrix(&figure->trv.rotation_matrix_y, 3);
+  if (!error) error = malloc_matrix(&figure->trv.rotation_matrix_z, 3);
   figure->trv.move_vector[x] = 0;
   figure->trv.move_vector[y] = 0;
   figure->trv.move_vector[z] = 0;

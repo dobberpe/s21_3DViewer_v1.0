@@ -42,13 +42,14 @@ SOURCE_TEST = $(wildcard $(TEST_DIR)/*.c)
 #================================= MAIN TARGETS ===============================#
 .PHONY: all install uninstall cli desktop launch_cli test gcov_report clang_i clang_n cppcheck valgrind_cli valgrind_test rebuild clean dvi dist
 
-all: install
-	./$(BUILD_DIR)/gr
+all: clean install
+	open $(BUILD_DIR)/gr.app
 
-install: $(BUILD_DIR)
+install: uninstall $(BUILD_DIR)
 	@echo "installing process started..."
 	@qmake gr.pro -o $(BUILD_DIR)
 	@make -C $(BUILD_DIR)
+	@rm -rf $(BUILD_DIR)/*o $(BUILD_DIR)/*h $(BUILD_DIR)/*cpp $(BUILD_DIR)/Makefile
 	@echo "successfuly installed"
 
 uninstall:

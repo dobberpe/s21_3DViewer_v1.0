@@ -197,11 +197,13 @@ int fill_vertex_p(Figure* figure, int* signal_to_fill, int v) {
           .vertex_p[figure->polygon[figure->amount_polygon - 1].amount_p - 1] =
           v - 1;
       error = realloc_vertex_p(&figure->polygon[figure->amount_polygon - 1]);
-      if (!error)
+      if (!error) {
         figure->polygon[figure->amount_polygon - 1]
             .vertex_p[figure->polygon[figure->amount_polygon - 1].amount_p -
                       1] =
             figure->polygon[figure->amount_polygon - 1].vertex_p[0];
+        figure->amount_polygon_edges += 1;
+      }
     } else
       error = ERR;
   } else if (*signal_to_fill == -1) {
