@@ -56,6 +56,9 @@ class main_window : public QMainWindow {
   QPushButton *increaseScaleButton;
   QPushButton *decreaseScaleButton;
   QPushButton *screenshotButton;
+  QLabel *fnameLabel;
+  QLabel *amountVnumberLabel;
+  QLabel *amountEnumberLabel;
   QPushButton *gifButton;
   QTimer *timer;
 
@@ -74,7 +77,6 @@ class main_window : public QMainWindow {
   int curr_rotateY = 0;
   int curr_rotateZ = 0;
   int curr_scale = 0;
-  QString fname = QString("3dviewer.obj");
  signals:
 };
 

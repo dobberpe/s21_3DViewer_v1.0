@@ -73,7 +73,6 @@ void main_window::on_loadButton_clicked() {
   QString fileName = QFileDialog::getOpenFileName(this, "Open Model File", "",
                                                   "OBJ Files (*.obj)");
   if (!fileName.isEmpty()) {
-    fname = fileName;
     rotationXSlider->setValue(0);
     rotationYSlider->setValue(0);
     rotationZSlider->setValue(0);
@@ -89,6 +88,9 @@ void main_window::on_loadButton_clicked() {
     curr_moveZ = 0;
     curr_scale = 0;
     v->loadModel(fileName);
+    fnameLabel->setText(QFileInfo(fileName).fileName());
+    amountVnumberLabel->setText(QString::number(v->new_data->amount_vertex));
+    amountEnumberLabel->setText(QString::number(v->new_data->amount_polygon_edges));
   }
 }
 
@@ -349,7 +351,7 @@ void main_window::setupFileInfo(QVBoxLayout *rightColumnLayout) {
     QLabel *filenameLabel = new QLabel("Имя файла:");
     QSpacerItem *fnameSpacer =
         new QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-    QLabel *fnameLabel = new QLabel(fname);
+    fnameLabel = new QLabel(QString("3dviewer.obj"));
 
     QHBoxLayout *fnameLayout = new QHBoxLayout;
     fnameLayout->addWidget(filenameLabel);
@@ -359,27 +361,27 @@ void main_window::setupFileInfo(QVBoxLayout *rightColumnLayout) {
     QLabel *amountVLabel = new QLabel("Вершин:");
     QSpacerItem *amountVSpacer =
         new QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-    QLabel *amountVnumberLabel = new QLabel(QString::number(v->new_data->amount_vertex));
+    amountVnumberLabel = new QLabel(QString::number(v->new_data->amount_vertex));
 
     QHBoxLayout *amountVLayout = new QHBoxLayout;
     amountVLayout->addWidget(amountVLabel);
     amountVLayout->addItem(amountVSpacer);
     amountVLayout->addWidget(amountVnumberLabel);
 
-    QLabel *amountPLabel = new QLabel("Ребер:");
-    QSpacerItem *amountPSpacer =
+    QLabel *amountELabel = new QLabel("Ребер:");
+    QSpacerItem *amountESpacer =
         new QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-    QLabel *amountPnumberLabel = new QLabel(QString::number(v->new_data->amount_polygon));
+    amountEnumberLabel = new QLabel(QString::number(v->new_data->amount_polygon_edges));
 
-    QHBoxLayout *amountPLayout = new QHBoxLayout;
-    amountPLayout->addWidget(amountPLabel);
-    amountPLayout->addItem(amountPSpacer);
-    amountPLayout->addWidget(amountPnumberLabel);
+    QHBoxLayout *amountELayout = new QHBoxLayout;
+    amountELayout->addWidget(amountELabel);
+    amountELayout->addItem(amountESpacer);
+    amountELayout->addWidget(amountEnumberLabel);
 
     QVBoxLayout *fileinfoLayout = new QVBoxLayout;
     fileinfoLayout->addLayout(fnameLayout);
     fileinfoLayout->addLayout(amountVLayout);
-    fileinfoLayout->addLayout(amountPLayout);
+    fileinfoLayout->addLayout(amountELayout);
 
     QFrame *frame = new QFrame;
     frame->setFrameShape(QFrame::Box);
