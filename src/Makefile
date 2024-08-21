@@ -30,6 +30,7 @@ TRANSFORM_DIR = transformations
 COMMON_DIR = common
 TEST_DIR = tests
 DVI_DIR = docs
+DIST_DIR = distribution
 #==============================================================================#
 
 #====================== LIST OF FILE AND DIRS IN MODULES ======================#
@@ -41,15 +42,13 @@ SOURCE_TEST = $(wildcard $(TEST_DIR)/*.c)
 #================================= MAIN TARGETS ===============================#
 .PHONY: all install uninstall cli desktop launch_cli test gcov_report clang_i clang_n cppcheck valgrind_cli valgrind_test rebuild clean dvi dist
 
-all:
-	$(CC) $(CFLAGS) main_test.c $(SOURCE_PARSER) $(SOURCE_TRANSFORM) -o $(PARSER) $(GFLAGS)
-	./$(PARSER)
+all: install
+	./$(BUILD_DIR)/gr
 
-install: uninstall $(BUILD_DIR)
+install: $(BUILD_DIR)
 	@echo "installing process started..."
 	@qmake gr.pro -o $(BUILD_DIR)
 	@make -C $(BUILD_DIR)
-	@rm -rf $(BUILD_DIR)/*o $(BUILD_DIR)/*h $(BUILD_DIR)/*cpp $(BUILD_DIR)/Makefile
 	@echo "successfuly installed"
 
 uninstall:
@@ -100,7 +99,7 @@ valgrind_tests: clean
 rebuild: uninstall install
 
 clean:
-	@rm -rf *.gcno *.gcda *.info report $(PARSER) $(TEST) *.dSYM dist a.out $(BUILD_DIR) $(DVI_DIR)
+	@rm -rf *.gcno *.gcda *.info report $(PARSER) $(TEST) *.dSYM dist a.out $(BUILD_DIR) $(DVI_DIR) $(DIST_DIR)
 	@echo "cleaning...\n"
 
 dvi:
@@ -113,11 +112,17 @@ ifeq ($(UNAME), Darwin)
 	open $(DVI_DIR)/html/index.html
 endif
 
-dist:
-	
+dist: clean $(DIST_DIR)
+	@echo "Creating a distribution..."
+	@echo "Distribution packaging..."
+	@tar --exclude='./tests' --exclude='./$(DIST_DIR)' --exclude='./build' -czf $(DIST_DIR)/3dviewer_v1.0.tar.gz -C ./ .
+	@echo "Distribution created"
+
 #==============================================================================#
 
 #============================== CREATE DIRECTORIES ============================#
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
+$(DIST_DIR):
+	mkdir -p $(DIST_DIR)
 #==============================================================================#
