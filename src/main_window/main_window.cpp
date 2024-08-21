@@ -130,7 +130,8 @@ void main_window::on_loadButton_clicked() {
     v->loadModel(fileName);
     fnameLabel->setText(QFileInfo(fileName).fileName());
     amountVnumberLabel->setText(QString::number(v->new_data->amount_vertex));
-    amountEnumberLabel->setText(QString::number(v->new_data->amount_polygon_edges));
+    amountEnumberLabel->setText(
+        QString::number(v->new_data->amount_polygon_edges));
   }
 }
 
@@ -180,205 +181,211 @@ void main_window::on_decreaseScaleButton_clicked() {
 }
 
 void main_window::on_backgroundColorButton_clicked() {
-    QColor color = QColorDialog::getColor(Qt::white, this, "Выбор цвета фона");
+  QColor color = QColorDialog::getColor(Qt::white, this, "Выбор цвета фона");
 
-    if (color.isValid()) {
-        v->bg_r = color.redF();
-        v->bg_g = color.greenF();
-        v->bg_b = color.blueF();
-        v->update();
-    }
+  if (color.isValid()) {
+    v->bg_r = color.redF();
+    v->bg_g = color.greenF();
+    v->bg_b = color.blueF();
+    v->update();
+  }
 }
 
 void main_window::on_vertexColorButton_clicked() {
-    QColor color = QColorDialog::getColor(Qt::white, this, "Выбор цвета вершин");
+  QColor color = QColorDialog::getColor(Qt::white, this, "Выбор цвета вершин");
 
-    if (color.isValid()) {
-        v->vertex_r = color.redF();
-        v->vertex_g = color.greenF();
-        v->vertex_b = color.blueF();
-        v->update();
-    }
+  if (color.isValid()) {
+    v->vertex_r = color.redF();
+    v->vertex_g = color.greenF();
+    v->vertex_b = color.blueF();
+    v->update();
+  }
 }
 
 void main_window::on_edgesColorButton_clicked() {
-    QColor color = QColorDialog::getColor(Qt::white, this, "Выбор цвета ребер");
+  QColor color = QColorDialog::getColor(Qt::white, this, "Выбор цвета ребер");
 
-    if (color.isValid()) {
-        v->polygon_r = color.redF();
-        v->polygon_g = color.greenF();
-        v->polygon_b = color.blueF();
-        v->update();
-    }
+  if (color.isValid()) {
+    v->polygon_r = color.redF();
+    v->polygon_g = color.greenF();
+    v->polygon_b = color.blueF();
+    v->update();
+  }
 }
 
 void main_window::on_vertexSizeSlider_valueChanged(int value) {
-    v->vertex_size = value;
-    v->update();
+  v->vertex_size = value;
+  v->update();
 }
 
 void main_window::on_edgesWidthSlider_valueChanged(int value) {
-    v->line_width = value;
-    v->update();
+  v->line_width = value;
+  v->update();
 }
 
 void main_window::on_projectionTypeButton_clicked() {
-    if (projectionTypeButton->text() == "Центральная") {
-        projectionTypeButton->setText("Параллельная");
-        v->projection_type = PARALLEL_PR;
-    } else {
-        projectionTypeButton->setText("Центральная");
-        v->projection_type = CENTRAL_PR;
-    }
-    v->update();
+  if (projectionTypeButton->text() == "Центральная") {
+    projectionTypeButton->setText("Параллельная");
+    v->projection_type = PARALLEL_PR;
+  } else {
+    projectionTypeButton->setText("Центральная");
+    v->projection_type = CENTRAL_PR;
+  }
+  v->update();
 }
 
 void main_window::on_vertexTypeButton_clicked() {
-    if (vertexTypeButton->text() == "Квадрат") {
-        vertexTypeButton->setText("Круг");
-        v->vertex_type = ROUND;
-    } else if (vertexTypeButton->text() == "Круг") {
-        vertexTypeButton->setText("Отсутствует");
-        v->vertex_type = NONE;
-    } else {
-        vertexTypeButton->setText("Квадрат");
-        v->vertex_type = SQUARE;
-    }
-    v->update();
+  if (vertexTypeButton->text() == "Квадрат") {
+    vertexTypeButton->setText("Круг");
+    v->vertex_type = ROUND;
+  } else if (vertexTypeButton->text() == "Круг") {
+    vertexTypeButton->setText("Отсутствует");
+    v->vertex_type = NONE;
+  } else {
+    vertexTypeButton->setText("Квадрат");
+    v->vertex_type = SQUARE;
+  }
+  v->update();
 }
 
 void main_window::on_edgesTypeButton_clicked() {
-    if (edgesTypeButton->text() == "Сплошная") {
-        edgesTypeButton->setText("Штриховка");
-        v->line_type = DASH_LINE;
-    } else {
-        edgesTypeButton->setText("Сплошная");
-        v->line_type = SOLID_LINE;
-    }
-    v->update();
+  if (edgesTypeButton->text() == "Сплошная") {
+    edgesTypeButton->setText("Штриховка");
+    v->line_type = DASH_LINE;
+  } else {
+    edgesTypeButton->setText("Сплошная");
+    v->line_type = SOLID_LINE;
+  }
+  v->update();
 }
 
 void main_window::on_screenshotButton_clicked() {
-    // Создание QPixmap для захвата виджета viewer
-    QPixmap pixmap(v->size());
-    v->render(&pixmap);
+  // Создание QPixmap для захвата виджета viewer
+  QPixmap pixmap(v->size());
+  v->render(&pixmap);
 
-    QStringList filters;
-    filters << "JPEG Files (*.jpg)" << "BMP Files (*.bmp)";
+  QStringList filters;
+  filters << "JPEG Files (*.jpg)" << "BMP Files (*.bmp)";
 
-    QFileDialog dialog(this);
-    dialog.setNameFilters(filters);
+  QFileDialog dialog(this);
+  dialog.setNameFilters(filters);
 
-    QString fileName;
-    if (dialog.exec()) {
-        fileName = dialog.selectedFiles().first();
-        QString selectedFilter = dialog.selectedNameFilter();
+  QString fileName;
+  if (dialog.exec()) {
+    fileName = dialog.selectedFiles().first();
+    QString selectedFilter = dialog.selectedNameFilter();
 
-        // Определяем формат в зависимости от выбранного фильтра
-        QString format;
-        if (selectedFilter.contains("*.jpg")) {
-            format = "JPEG";
-        } else if (selectedFilter.contains("*.bmp")) {
-            format = "BMP";
-        }
-
-        // Сохранение файла
-        if (!fileName.isEmpty()) {
-            pixmap.save(fileName, format.toUtf8().constData());
-        }
+    // Определяем формат в зависимости от выбранного фильтра
+    QString format;
+    if (selectedFilter.contains("*.jpg")) {
+      format = "JPEG";
+    } else if (selectedFilter.contains("*.bmp")) {
+      format = "BMP";
     }
+
+    // Сохранение файла
+    if (!fileName.isEmpty()) {
+      pixmap.save(fileName, format.toUtf8().constData());
+    }
+  }
 }
 
 void main_window::on_gifButton_clicked() {
-    qDebug() << "entered";
+  qDebug() << "entered";
 
-    if (!timer->isActive()) {
-        timer->start(100);
-        qDebug() << "start";
-    }
+  if (!timer->isActive()) {
+    timer->start(100);
+    qDebug() << "start";
+  }
 }
 
 void main_window::on_timer_timeout() {
-    if (currentFrame < totalFrames) {
-        QPixmap pixmap(v->size());
-        v->render(&pixmap);
-        qDebug() << "render";
-        QImage scaledImage = pixmap.scaled(width, height, Qt::KeepAspectRatio).toImage();
-        qDebug() << "scaled";
-        capturedFrames.append(scaledImage);
-        qDebug() << "append";
-        currentFrame++;
-        qDebug() << currentFrame;
-    } else {
-        qDebug() << "total " << totalFrames;
-        timer->stop();
-        currentFrame = 0;
-        qDebug() << "Captured all frames, now saving GIF";
-        QString fileName = QFileDialog::getSaveFileName(nullptr, "Сохранение GIF", "", "GIF Files (*.gif)");
-        if (!fileName.isEmpty()) {
-            qDebug() << "fname";
-            saveGif(fileName, 100); // Сохраняем GIF
-            qDebug() << "saved";
-        }
-        capturedFrames.clear();
+  if (currentFrame < totalFrames) {
+    QPixmap pixmap(v->size());
+    v->render(&pixmap);
+    qDebug() << "render";
+    QImage scaledImage =
+        pixmap.scaled(width, height, Qt::KeepAspectRatio).toImage();
+    qDebug() << "scaled";
+    capturedFrames.append(scaledImage);
+    qDebug() << "append";
+    currentFrame++;
+    qDebug() << currentFrame;
+  } else {
+    qDebug() << "total " << totalFrames;
+    timer->stop();
+    currentFrame = 0;
+    qDebug() << "Captured all frames, now saving GIF";
+    QString fileName = QFileDialog::getSaveFileName(nullptr, "Сохранение GIF",
+                                                    "", "GIF Files (*.gif)");
+    if (!fileName.isEmpty()) {
+      qDebug() << "fname";
+      saveGif(fileName, 100);  // Сохраняем GIF
+      qDebug() << "saved";
     }
+    capturedFrames.clear();
+  }
 }
 
-void main_window::saveGif(const QString& fileName, const int delayMs) {
-    QFile file(fileName);
-    if (!file.open(QIODevice::WriteOnly)) {
-        qWarning() << "Failed to open file for writing:" << fileName;
-        return;
-    }
+void main_window::saveGif(const QString &fileName, const int delayMs) {
+  QFile file(fileName);
+  if (!file.open(QIODevice::WriteOnly)) {
+    qWarning() << "Failed to open file for writing:" << fileName;
+    return;
+  }
 
-    QDataStream out(&file);
-    out.setByteOrder(QDataStream::LittleEndian);
+  QDataStream out(&file);
+  out.setByteOrder(QDataStream::LittleEndian);
 
-    // GIF Header
-    out.writeRawData("GIF89a", 6); // Signature and version
+  // GIF Header
+  out.writeRawData("GIF89a", 6);  // Signature and version
 
-    // Logical Screen Descriptor
-    out << static_cast<quint16>(width); // Ширина
-    out << static_cast<quint16>(height); // Высота
-    out << static_cast<quint8>(0xF7); // Global Color Table Flag, Color Resolution, and Sort Flag
-    out << static_cast<quint8>(0);    // Background Color Index
-    out << static_cast<quint8>(0);    // Pixel Aspect Ratio
+  // Logical Screen Descriptor
+  out << static_cast<quint16>(width);   // Ширина
+  out << static_cast<quint16>(height);  // Высота
+  out << static_cast<quint8>(
+      0xF7);  // Global Color Table Flag, Color Resolution, and Sort Flag
+  out << static_cast<quint8>(0);  // Background Color Index
+  out << static_cast<quint8>(0);  // Pixel Aspect Ratio
 
-    // Global Color Table (черно-белая палитра для простоты)
-    out << static_cast<quint8>(0x00); // Черный
-    out << static_cast<quint8>(0x00); // Черный
-    out << static_cast<quint8>(0x00); // Черный
-    out << static_cast<quint8>(0xFF); // Белый
-    out << static_cast<quint8>(0xFF); // Белый
-    out << static_cast<quint8>(0xFF); // Белый
+  // Global Color Table (черно-белая палитра для простоты)
+  out << static_cast<quint8>(0x00);  // Черный
+  out << static_cast<quint8>(0x00);  // Черный
+  out << static_cast<quint8>(0x00);  // Черный
+  out << static_cast<quint8>(0xFF);  // Белый
+  out << static_cast<quint8>(0xFF);  // Белый
+  out << static_cast<quint8>(0xFF);  // Белый
 
-    for (const QImage &image : capturedFrames) {
-        // Graphics Control Extension
-        out.writeRawData("\x21\xF9\x04", 3); // Extension Introducer, Graphics Control Label
-        out << static_cast<quint8>(0);    // No Transparency, Disposal Method 0
-        out << static_cast<quint16>(delayMs / 10); // Delay Time (in hundredths of a second)
-        out << static_cast<quint8>(0);    // Transparent Color Index (none)
-        out.writeRawData("\x00", 1);      // Block Terminator
+  for (const QImage &image : capturedFrames) {
+    // Graphics Control Extension
+    out.writeRawData("\x21\xF9\x04",
+                     3);  // Extension Introducer, Graphics Control Label
+    out << static_cast<quint8>(0);  // No Transparency, Disposal Method 0
+    out << static_cast<quint16>(delayMs /
+                                10);  // Delay Time (in hundredths of a second)
+    out << static_cast<quint8>(0);    // Transparent Color Index (none)
+    out.writeRawData("\x00", 1);      // Block Terminator
 
-        // Image Descriptor
-        out.writeRawData("\x2C", 1); // Image Separator
-        out << static_cast<quint16>(0); // Image Left Position
-        out << static_cast<quint16>(0); // Image Top Position
-        out << static_cast<quint16>(width); // Image Width
-        out << static_cast<quint16>(height); // Image Height
-        out << static_cast<quint8>(0);    // Local Color Table Flag, Interlace Flag, Sort Flag
+    // Image Descriptor
+    out.writeRawData("\x2C", 1);          // Image Separator
+    out << static_cast<quint16>(0);       // Image Left Position
+    out << static_cast<quint16>(0);       // Image Top Position
+    out << static_cast<quint16>(width);   // Image Width
+    out << static_cast<quint16>(height);  // Image Height
+    out << static_cast<quint8>(
+        0);  // Local Color Table Flag, Interlace Flag, Sort Flag
 
-        // Image Data
-        QBuffer buffer;
-        buffer.open(QIODevice::WriteOnly);
-        image.save(&buffer, "BMP"); // Конвертируем кадр в BMP для простоты
-        out.writeRawData(buffer.data().data(), buffer.size());
-    }
+    // Image Data
+    QBuffer buffer;
+    buffer.open(QIODevice::WriteOnly);
+    image.save(&buffer, "BMP");  // Конвертируем кадр в BMP для простоты
+    out.writeRawData(buffer.data().data(), buffer.size());
+  }
 
-    // GIF Trailer
-    out.writeRawData("\x3B", 1); // GIF Trailer
+  // GIF Trailer
+  out.writeRawData("\x3B", 1);  // GIF Trailer
 
-    file.close();
+  file.close();
 }
 
 void main_window::rotate_slider(double rotate_X, double rotate_Y,
@@ -519,45 +526,46 @@ void main_window::setupSliderBox(QVBoxLayout *rightColumnLayout, bool rotate) {
 }
 
 void main_window::setupFileInfo(QVBoxLayout *rightColumnLayout) {
-    QLabel *filenameLabel = new QLabel("Имя файла:");
-    QSpacerItem *fnameSpacer =
-        new QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-    fnameLabel = new QLabel(QString("3dviewer.obj"));
+  QLabel *filenameLabel = new QLabel("Имя файла:");
+  QSpacerItem *fnameSpacer =
+      new QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+  fnameLabel = new QLabel(QString("3dviewer.obj"));
 
-    QHBoxLayout *fnameLayout = new QHBoxLayout;
-    fnameLayout->addWidget(filenameLabel);
-    fnameLayout->addItem(fnameSpacer);
-    fnameLayout->addWidget(fnameLabel);
+  QHBoxLayout *fnameLayout = new QHBoxLayout;
+  fnameLayout->addWidget(filenameLabel);
+  fnameLayout->addItem(fnameSpacer);
+  fnameLayout->addWidget(fnameLabel);
 
-    QLabel *amountVLabel = new QLabel("Вершин:");
-    QSpacerItem *amountVSpacer =
-        new QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-    amountVnumberLabel = new QLabel(QString::number(v->new_data->amount_vertex));
+  QLabel *amountVLabel = new QLabel("Вершин:");
+  QSpacerItem *amountVSpacer =
+      new QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+  amountVnumberLabel = new QLabel(QString::number(v->new_data->amount_vertex));
 
-    QHBoxLayout *amountVLayout = new QHBoxLayout;
-    amountVLayout->addWidget(amountVLabel);
-    amountVLayout->addItem(amountVSpacer);
-    amountVLayout->addWidget(amountVnumberLabel);
+  QHBoxLayout *amountVLayout = new QHBoxLayout;
+  amountVLayout->addWidget(amountVLabel);
+  amountVLayout->addItem(amountVSpacer);
+  amountVLayout->addWidget(amountVnumberLabel);
 
-    QLabel *amountELabel = new QLabel("Ребер:");
-    QSpacerItem *amountESpacer =
-        new QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-    amountEnumberLabel = new QLabel(QString::number(v->new_data->amount_polygon_edges));
+  QLabel *amountELabel = new QLabel("Ребер:");
+  QSpacerItem *amountESpacer =
+      new QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+  amountEnumberLabel =
+      new QLabel(QString::number(v->new_data->amount_polygon_edges));
 
-    QHBoxLayout *amountELayout = new QHBoxLayout;
-    amountELayout->addWidget(amountELabel);
-    amountELayout->addItem(amountESpacer);
-    amountELayout->addWidget(amountEnumberLabel);
+  QHBoxLayout *amountELayout = new QHBoxLayout;
+  amountELayout->addWidget(amountELabel);
+  amountELayout->addItem(amountESpacer);
+  amountELayout->addWidget(amountEnumberLabel);
 
-    QVBoxLayout *fileinfoLayout = new QVBoxLayout;
-    fileinfoLayout->addLayout(fnameLayout);
-    fileinfoLayout->addLayout(amountVLayout);
-    fileinfoLayout->addLayout(amountELayout);
+  QVBoxLayout *fileinfoLayout = new QVBoxLayout;
+  fileinfoLayout->addLayout(fnameLayout);
+  fileinfoLayout->addLayout(amountVLayout);
+  fileinfoLayout->addLayout(amountELayout);
 
-    QFrame *frame = new QFrame;
-    frame->setFrameShape(QFrame::Box);
-    frame->setLineWidth(1);
-    frame->setLayout(fileinfoLayout);
+  QFrame *frame = new QFrame;
+  frame->setFrameShape(QFrame::Box);
+  frame->setLineWidth(1);
+  frame->setLayout(fileinfoLayout);
 
-    rightColumnLayout->addWidget(frame);
+  rightColumnLayout->addWidget(frame);
 }

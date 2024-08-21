@@ -40,10 +40,9 @@ class Viewer : public QOpenGLWidget {
   double polygon_r = 0, polygon_g = 1, polygon_b = 0;
   double bg_r = 1, bg_g = 1, bg_b = 1;
   double line_width = 1, vertex_size = 3;
-  int projection_type = CENTRAL_PR; // PARALLEL_PR
-  int line_type = SOLID_LINE; // DASH_LINE
-  int vertex_type = SQUARE; // NONE, ROUND
-
+  int projection_type = CENTRAL_PR;  // PARALLEL_PR
+  int line_type = SOLID_LINE;        // DASH_LINE
+  int vertex_type = SQUARE;          // NONE, ROUND
 
  protected:
   void initializeGL() override;
@@ -57,7 +56,5 @@ class Viewer : public QOpenGLWidget {
   QPoint new_pos;
   QString start_file = QString("./obj_files/3dviewer.obj");
   double move_coef;
-
-
 };
 #endif  // VIEWER_H

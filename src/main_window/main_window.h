@@ -1,14 +1,14 @@
 #ifndef MAIN_WINDOW_H
 #define MAIN_WINDOW_H
 
+#include <QColorDialog>
 #include <QFileDialog>
 #include <QLabel>
 #include <QMainWindow>
 #include <QPushButton>
 #include <QSlider>
-#include <QVBoxLayout>
-#include <QColorDialog>
 #include <QTimer>
+#include <QVBoxLayout>
 
 #include "graphics/graphics.h"
 
@@ -44,7 +44,7 @@ class main_window : public QMainWindow {
   void on_timer_timeout();
 
  private:
-  void saveGif(const QString& fileName, const int delayMs);
+  void saveGif(const QString &fileName, const int delayMs);
   void rotate_slider(double rotate_X, double rotate_Y, double rotate_Z);
   void move_slider(double move_X, double move_Y, double move_Z);
   void scale_slider(double scale);

@@ -11,6 +11,7 @@ int init_figure(Figure* figure) {
   figure->polygon = NULL;
   figure->amount_vertex = 0;
   figure->amount_polygon = 0;
+  figure->amount_polygon_edges = 0;
   figure->x_max = figure->y_max = figure->z_max = 0;
   figure->x_min = figure->y_min = figure->z_min = 0;
   figure->cur_scale = 1;

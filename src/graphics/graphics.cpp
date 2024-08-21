@@ -59,21 +59,22 @@ void Viewer::paintGL() {
     glFrustum(-1, 1, -1, 1, 1, move_coef * 8);
     glTranslatef(0, 0, -move_coef / 2);
   } else {
-    glOrtho(-1 * move_coef, 1 * move_coef, -1 * move_coef, 1 * move_coef, -1 * move_coef, move_coef * 100);
+    glOrtho(-1 * move_coef, 1 * move_coef, -1 * move_coef, 1 * move_coef,
+            -1 * move_coef, move_coef * 100);
     glTranslatef(0, 0, 0);
   }
-  
+
   glEnableClientState(GL_VERTEX_ARRAY);
 
   // рисуем точки
-if (vertex_type != NONE) {
+  if (vertex_type != NONE) {
     if (vertex_type == ROUND) glEnable(GL_POINT_SMOOTH);
     glVertexPointer(3, GL_DOUBLE, 0, new_data->vertex);
     glPointSize(vertex_size);
     glColor3f(vertex_r, vertex_g, vertex_b);
     glDrawArrays(GL_POINTS, 0, new_data->amount_vertex);
     if (vertex_type == ROUND) glDisable(GL_POINT_SMOOTH);
-}
+  }
 
   // рисуем линии
   if (line_type == DASH_LINE) {
