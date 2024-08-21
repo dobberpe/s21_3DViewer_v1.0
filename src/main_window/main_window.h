@@ -7,6 +7,7 @@
 #include <QPushButton>
 #include <QSlider>
 #include <QVBoxLayout>
+#include <QColorDialog>
 #include <QTimer>
 
 #include "graphics/graphics.h"
@@ -30,6 +31,14 @@ class main_window : public QMainWindow {
   void on_scaleSlider_valueChanged(int value);
   void on_increaseScaleButton_clicked();
   void on_decreaseScaleButton_clicked();
+  void on_backgroundColorButton_clicked();
+  void on_vertexColorButton_clicked();
+  void on_edgesColorButton_clicked();
+  void on_vertexSizeSlider_valueChanged(int value);
+  void on_edgesWidthSlider_valueChanged(int value);
+  void on_projectionTypeButton_clicked();
+  void on_vertexTypeButton_clicked();
+  void on_edgesTypeButton_clicked();
   void on_screenshotButton_clicked();
   void on_gifButton_clicked();
   void on_timer_timeout();
@@ -55,6 +64,14 @@ class main_window : public QMainWindow {
   QSlider *scaleSlider;
   QPushButton *increaseScaleButton;
   QPushButton *decreaseScaleButton;
+  QPushButton *backgroundColorButton;
+  QPushButton *vertexColorButton;
+  QPushButton *edgesColorButton;
+  QSlider *vertexSizeSlider;
+  QSlider *edgesWidthSlider;
+  QPushButton *projectionTypeButton;
+  QPushButton *vertexTypeButton;
+  QPushButton *edgesTypeButton;
   QPushButton *screenshotButton;
   QLabel *fnameLabel;
   QLabel *amountVnumberLabel;

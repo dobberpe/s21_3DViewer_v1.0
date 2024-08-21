@@ -55,6 +55,46 @@ main_window::main_window(QWidget *parent) : QMainWindow(parent) {
   connect(decreaseScaleButton, &QPushButton::clicked, this,
           &main_window::on_decreaseScaleButton_clicked);
 
+  backgroundColorButton = new QPushButton("Фон");
+  // backgroundColorButton->setFixedSize(QSize(20, 20));
+  connect(backgroundColorButton, &QPushButton::clicked, this,
+          &main_window::on_backgroundColorButton_clicked);
+
+  vertexColorButton = new QPushButton("Вершины");
+  // vertexColorButton->setFixedSize(QSize(20, 20));
+  connect(vertexColorButton, &QPushButton::clicked, this,
+          &main_window::on_vertexColorButton_clicked);
+
+  edgesColorButton = new QPushButton("Ребра");
+  // edgesColorButton->setFixedSize(QSize(20, 20));
+  connect(edgesColorButton, &QPushButton::clicked, this,
+          &main_window::on_edgesColorButton_clicked);
+
+  vertexSizeSlider = new QSlider(Qt::Horizontal);
+  vertexSizeSlider->setRange(1, 20);
+  connect(vertexSizeSlider, &QSlider::valueChanged, this,
+          &main_window::on_vertexSizeSlider_valueChanged);
+
+  edgesWidthSlider = new QSlider(Qt::Horizontal);
+  edgesWidthSlider->setRange(1, 20);
+  connect(edgesWidthSlider, &QSlider::valueChanged, this,
+          &main_window::on_edgesWidthSlider_valueChanged);
+
+  projectionTypeButton = new QPushButton("Центральная");
+  // projectionTypeButton->setFixedSize(QSize(20, 20));
+  connect(projectionTypeButton, &QPushButton::clicked, this,
+          &main_window::on_projectionTypeButton_clicked);
+
+  vertexTypeButton = new QPushButton("Квадрат");
+  // vertexTypeButton->setFixedSize(QSize(20, 20));
+  connect(vertexTypeButton, &QPushButton::clicked, this,
+          &main_window::on_vertexTypeButton_clicked);
+
+  edgesTypeButton = new QPushButton("Сплошная");
+  // edgesTypeButton->setFixedSize(QSize(20, 20));
+  connect(edgesTypeButton, &QPushButton::clicked, this,
+          &main_window::on_edgesTypeButton_clicked);
+
   screenshotButton = new QPushButton("Снимок экрана");
   connect(screenshotButton, &QPushButton::clicked, this,
           &main_window::on_screenshotButton_clicked);
@@ -137,6 +177,85 @@ void main_window::on_increaseScaleButton_clicked() {
 
 void main_window::on_decreaseScaleButton_clicked() {
   scaleSlider->setValue(scaleSlider->value() - 1);
+}
+
+void main_window::on_backgroundColorButton_clicked() {
+    QColor color = QColorDialog::getColor(Qt::white, this, "Выбор цвета фона");
+
+    if (color.isValid()) {
+        v->bg_r = color.redF();
+        v->bg_g = color.greenF();
+        v->bg_b = color.blueF();
+        v->update();
+    }
+}
+
+void main_window::on_vertexColorButton_clicked() {
+    QColor color = QColorDialog::getColor(Qt::white, this, "Выбор цвета вершин");
+
+    if (color.isValid()) {
+        v->vertex_r = color.redF();
+        v->vertex_g = color.greenF();
+        v->vertex_b = color.blueF();
+        v->update();
+    }
+}
+
+void main_window::on_edgesColorButton_clicked() {
+    QColor color = QColorDialog::getColor(Qt::white, this, "Выбор цвета ребер");
+
+    if (color.isValid()) {
+        v->polygon_r = color.redF();
+        v->polygon_g = color.greenF();
+        v->polygon_b = color.blueF();
+        v->update();
+    }
+}
+
+void main_window::on_vertexSizeSlider_valueChanged(int value) {
+    v->vertex_size = value;
+    v->update();
+}
+
+void main_window::on_edgesWidthSlider_valueChanged(int value) {
+    v->line_width = value;
+    v->update();
+}
+
+void main_window::on_projectionTypeButton_clicked() {
+    if (projectionTypeButton->text() == "Центральная") {
+        projectionTypeButton->setText("Параллельная");
+        v->projection_type = PARALLEL_PR;
+    } else {
+        projectionTypeButton->setText("Центральная");
+        v->projection_type = CENTRAL_PR;
+    }
+    v->update();
+}
+
+void main_window::on_vertexTypeButton_clicked() {
+    if (vertexTypeButton->text() == "Квадрат") {
+        vertexTypeButton->setText("Круг");
+        v->vertex_type = ROUND;
+    } else if (vertexTypeButton->text() == "Круг") {
+        vertexTypeButton->setText("Отсутствует");
+        v->vertex_type = NONE;
+    } else {
+        vertexTypeButton->setText("Квадрат");
+        v->vertex_type = SQUARE;
+    }
+    v->update();
+}
+
+void main_window::on_edgesTypeButton_clicked() {
+    if (edgesTypeButton->text() == "Сплошная") {
+        edgesTypeButton->setText("Штриховка");
+        v->line_type = DASH_LINE;
+    } else {
+        edgesTypeButton->setText("Сплошная");
+        v->line_type = SOLID_LINE;
+    }
+    v->update();
 }
 
 void main_window::on_screenshotButton_clicked() {
@@ -292,6 +411,52 @@ void main_window::setupUI() {
   scaleLayout->addWidget(scaleSlider);
   scaleLayout->addWidget(increaseScaleButton);
 
+  QLabel *colorLabel = new QLabel("Цветовая палитра");
+  QHBoxLayout *colorButtonsLayout = new QHBoxLayout;
+  colorButtonsLayout->addWidget(backgroundColorButton);
+  colorButtonsLayout->addWidget(vertexColorButton);
+  colorButtonsLayout->addWidget(edgesColorButton);
+
+  QVBoxLayout *colorLayout = new QVBoxLayout;
+  colorLayout->addWidget(colorLabel);
+  colorLayout->addLayout(colorButtonsLayout);
+
+  QFrame *colorFrame = new QFrame;
+  colorFrame->setFrameShape(QFrame::Box);
+  colorFrame->setLineWidth(1);
+  colorFrame->setLayout(colorLayout);
+
+  QLabel *vertexSizeLabel = new QLabel("Размер вершин:");
+  QLabel *edgesWidthLabel = new QLabel("Толщина ребер:");
+
+  QLabel *typeLabel = new QLabel("Настройка отображения");
+
+  QLabel *projectionTypeLabel = new QLabel("Проекция:");
+  QHBoxLayout *projectionTypeLayout = new QHBoxLayout;
+  projectionTypeLayout->addWidget(projectionTypeLabel);
+  projectionTypeLayout->addWidget(projectionTypeButton);
+
+  QLabel *vertexTypeLabel = new QLabel("Вершины:");
+  QHBoxLayout *vertexTypeLayout = new QHBoxLayout;
+  vertexTypeLayout->addWidget(vertexTypeLabel);
+  vertexTypeLayout->addWidget(vertexTypeButton);
+
+  QLabel *edgesTypeLabel = new QLabel("Ребра:");
+  QHBoxLayout *edgesTypeLayout = new QHBoxLayout;
+  edgesTypeLayout->addWidget(edgesTypeLabel);
+  edgesTypeLayout->addWidget(edgesTypeButton);
+
+  QVBoxLayout *typeLayout = new QVBoxLayout;
+  typeLayout->addWidget(typeLabel);
+  typeLayout->addLayout(projectionTypeLayout);
+  typeLayout->addLayout(vertexTypeLayout);
+  typeLayout->addLayout(edgesTypeLayout);
+
+  QFrame *typeFrame = new QFrame;
+  typeFrame->setFrameShape(QFrame::Box);
+  typeFrame->setLineWidth(1);
+  typeFrame->setLayout(typeLayout);
+
   QSpacerItem *spacer =
       new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
@@ -302,6 +467,12 @@ void main_window::setupUI() {
   setupSliderBox(rightColumnLayout, MOVE);
   rightColumnLayout->addWidget(scaleLabel);
   rightColumnLayout->addLayout(scaleLayout);
+  rightColumnLayout->addWidget(colorFrame);
+  rightColumnLayout->addWidget(vertexSizeLabel);
+  rightColumnLayout->addWidget(vertexSizeSlider);
+  rightColumnLayout->addWidget(edgesWidthLabel);
+  rightColumnLayout->addWidget(edgesWidthSlider);
+  rightColumnLayout->addWidget(typeFrame);
   rightColumnLayout->addWidget(screenshotButton);
   rightColumnLayout->addWidget(gifButton);
   rightColumnLayout->addItem(spacer);
