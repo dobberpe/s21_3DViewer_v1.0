@@ -7,6 +7,9 @@
 #include <QMainWindow>
 #include <QPushButton>
 #include <QSlider>
+#include <QComboBox>
+#include <QSpinBox>
+#include <QSettings>
 #include <QTimer>
 #include <QVBoxLayout>
 
@@ -19,15 +22,22 @@ class main_window : public QMainWindow {
   Q_OBJECT
  public:
   explicit main_window(QWidget *parent = nullptr);
+  ~main_window();
 
  private slots:
   void on_loadButton_clicked();
   void on_rotationXSlider_valueChanged(int value);
   void on_rotationYSlider_valueChanged(int value);
   void on_rotationZSlider_valueChanged(int value);
+  void on_rotationXSpinBox_valueChanged(int value);
+  void on_rotationYSpinBox_valueChanged(int value);
+  void on_rotationZSpinBox_valueChanged(int value);
   void on_moveXSlider_valueChanged(int value);
   void on_moveYSlider_valueChanged(int value);
   void on_moveZSlider_valueChanged(int value);
+  void on_moveXSpinBox_valueChanged(int value);
+  void on_moveYSpinBox_valueChanged(int value);
+  void on_moveZSpinBox_valueChanged(int value);
   void on_scaleSlider_valueChanged(int value);
   void on_increaseScaleButton_clicked();
   void on_decreaseScaleButton_clicked();
@@ -36,17 +46,19 @@ class main_window : public QMainWindow {
   void on_edgesColorButton_clicked();
   void on_vertexSizeSlider_valueChanged(int value);
   void on_edgesWidthSlider_valueChanged(int value);
-  void on_projectionTypeButton_clicked();
-  void on_vertexTypeButton_clicked();
-  void on_edgesTypeButton_clicked();
+  void on_projectionTypeComboBox_indexChanged(int index);
+  void on_vertexTypeComboBox_indexChanged(int index);
+  void on_edgesTypeComboBox_indexChanged(int index);
   void on_screenshotButton_clicked();
   void on_gifButton_clicked();
   void on_timer_timeout();
 
  private:
+  void save_settings();
+  void load_settings();
   void saveGif(const QString &fileName, const int delayMs);
-  void rotate_slider(double rotate_X, double rotate_Y, double rotate_Z);
-  void move_slider(double move_X, double move_Y, double move_Z);
+  void rotate_event(double rotate_X, double rotate_Y, double rotate_Z);
+  void move_event(double move_X, double move_Y, double move_Z);
   void scale_slider(double scale);
   void setupUI();
   void setupFileInfo(QVBoxLayout *rightColumnLayout);
@@ -58,9 +70,15 @@ class main_window : public QMainWindow {
   QSlider *rotationXSlider;
   QSlider *rotationYSlider;
   QSlider *rotationZSlider;
+  QSpinBox *rotationXSpinBox;
+  QSpinBox *rotationYSpinBox;
+  QSpinBox *rotationZSpinBox;
   QSlider *moveXSlider;
   QSlider *moveYSlider;
   QSlider *moveZSlider;
+  QSpinBox *moveXSpinBox;
+  QSpinBox *moveYSpinBox;
+  QSpinBox *moveZSpinBox;
   QSlider *scaleSlider;
   QPushButton *increaseScaleButton;
   QPushButton *decreaseScaleButton;
@@ -69,9 +87,9 @@ class main_window : public QMainWindow {
   QPushButton *edgesColorButton;
   QSlider *vertexSizeSlider;
   QSlider *edgesWidthSlider;
-  QPushButton *projectionTypeButton;
-  QPushButton *vertexTypeButton;
-  QPushButton *edgesTypeButton;
+  QComboBox *projectionTypeComboBox;
+  QComboBox *vertexTypeComboBox;
+  QComboBox *edgesTypeComboBox;
   QPushButton *screenshotButton;
   QLabel *fnameLabel;
   QLabel *amountVnumberLabel;
