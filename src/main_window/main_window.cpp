@@ -2,9 +2,11 @@
 
 main_window::main_window(QWidget *parent) : QMainWindow(parent) {
   setWindowTitle("3dViewer");
-  setMinimumSize(800, 600);
+  // setMinimumSize(800, 600);
 
   v = new Viewer;
+  v->setMinimumWidth(600);
+  v->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
   loadButton = new QPushButton("Выбор файла");
   connect(loadButton, &QPushButton::clicked, this,
@@ -56,17 +58,17 @@ main_window::main_window(QWidget *parent) : QMainWindow(parent) {
           &main_window::on_decreaseScaleButton_clicked);
 
   backgroundColorButton = new QPushButton("Фон");
-  // backgroundColorButton->setFixedSize(QSize(20, 20));
+  backgroundColorButton->setFixedSize(QSize(30, 20));
   connect(backgroundColorButton, &QPushButton::clicked, this,
           &main_window::on_backgroundColorButton_clicked);
 
   vertexColorButton = new QPushButton("Вершины");
-  // vertexColorButton->setFixedSize(QSize(20, 20));
+  vertexColorButton->setFixedSize(QSize(60, 20));
   connect(vertexColorButton, &QPushButton::clicked, this,
           &main_window::on_vertexColorButton_clicked);
 
   edgesColorButton = new QPushButton("Ребра");
-  // edgesColorButton->setFixedSize(QSize(20, 20));
+  edgesColorButton->setFixedSize(QSize(40, 20));
   connect(edgesColorButton, &QPushButton::clicked, this,
           &main_window::on_edgesColorButton_clicked);
 
@@ -90,7 +92,7 @@ main_window::main_window(QWidget *parent) : QMainWindow(parent) {
   connect(vertexTypeButton, &QPushButton::clicked, this,
           &main_window::on_vertexTypeButton_clicked);
 
-  edgesTypeButton = new QPushButton("Сплошная");
+  edgesTypeButton = new QPushButton("Сплошные");
   // edgesTypeButton->setFixedSize(QSize(20, 20));
   connect(edgesTypeButton, &QPushButton::clicked, this,
           &main_window::on_edgesTypeButton_clicked);
@@ -239,7 +241,7 @@ void main_window::on_vertexTypeButton_clicked() {
     vertexTypeButton->setText("Круг");
     v->vertex_type = ROUND;
   } else if (vertexTypeButton->text() == "Круг") {
-    vertexTypeButton->setText("Отсутствует");
+    vertexTypeButton->setText("Отсутствуют");
     v->vertex_type = NONE;
   } else {
     vertexTypeButton->setText("Квадрат");
@@ -249,11 +251,11 @@ void main_window::on_vertexTypeButton_clicked() {
 }
 
 void main_window::on_edgesTypeButton_clicked() {
-  if (edgesTypeButton->text() == "Сплошная") {
+  if (edgesTypeButton->text() == "Сплошные") {
     edgesTypeButton->setText("Штриховка");
     v->line_type = DASH_LINE;
   } else {
-    edgesTypeButton->setText("Сплошная");
+    edgesTypeButton->setText("Сплошные");
     v->line_type = SOLID_LINE;
   }
   v->update();
@@ -436,6 +438,12 @@ void main_window::setupUI() {
   QLabel *vertexSizeLabel = new QLabel("Размер вершин:");
   QLabel *edgesWidthLabel = new QLabel("Толщина ребер:");
 
+  QGridLayout *resizeLayout = new QGridLayout;
+  resizeLayout->addWidget(vertexSizeLabel, 0, 0);
+  resizeLayout->addWidget(vertexSizeSlider, 0, 1);
+  resizeLayout->addWidget(edgesWidthLabel, 1, 0);
+  resizeLayout->addWidget(edgesWidthSlider, 1, 1);
+
   QLabel *typeLabel = new QLabel("Настройка отображения");
 
   QLabel *projectionTypeLabel = new QLabel("Проекция:");
@@ -475,10 +483,7 @@ void main_window::setupUI() {
   rightColumnLayout->addWidget(scaleLabel);
   rightColumnLayout->addLayout(scaleLayout);
   rightColumnLayout->addWidget(colorFrame);
-  rightColumnLayout->addWidget(vertexSizeLabel);
-  rightColumnLayout->addWidget(vertexSizeSlider);
-  rightColumnLayout->addWidget(edgesWidthLabel);
-  rightColumnLayout->addWidget(edgesWidthSlider);
+  rightColumnLayout->addLayout(resizeLayout);
   rightColumnLayout->addWidget(typeFrame);
   rightColumnLayout->addWidget(screenshotButton);
   rightColumnLayout->addWidget(gifButton);
@@ -489,8 +494,8 @@ void main_window::setupUI() {
   mainLayout->addLayout(rightColumnLayout, 0, 1);
 
   // Устанавливаем вес столбцов
-  mainLayout->setColumnStretch(0, 8);
-  mainLayout->setColumnStretch(1, 2);
+  mainLayout->setColumnStretch(0, 9);
+  mainLayout->setColumnStretch(1, 1);
 }
 
 void main_window::setupSliderBox(QVBoxLayout *rightColumnLayout, bool rotate) {
