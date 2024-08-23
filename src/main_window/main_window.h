@@ -55,15 +55,19 @@ class main_window : public QMainWindow {
   void on_timer_timeout();
 
  private:
-  void saveGif(const QString &fileName, const int delayMs);
+  void rotation_setup();
+  void move_setup();
+  void scale_setup();
+  void appearance_setup();
   void save_settings();
   void load_settings();
   void rotate_event(double rotate_X, double rotate_Y, double rotate_Z);
   void move_event(double move_X, double move_Y, double move_Z);
   void scale_slider(double scale);
   void setupUI();
-  void setupFileInfo(QVBoxLayout *rightColumnLayout);
   void setupSliderBox(QVBoxLayout *rightColumnLayout, bool rotate);
+  void setupSettings(QVBoxLayout *rightColumnLayout);
+  void setupFileInfo(QVBoxLayout *rightColumnLayout);
 
   Viewer *v;
 
