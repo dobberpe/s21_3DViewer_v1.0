@@ -12,6 +12,7 @@
 #include <QSettings>
 #include <QTimer>
 #include <QVBoxLayout>
+#include "qgifimage.h"
 
 #include "graphics/graphics.h"
 
@@ -54,9 +55,9 @@ class main_window : public QMainWindow {
   void on_timer_timeout();
 
  private:
+  void saveGif(const QString &fileName, const int delayMs);
   void save_settings();
   void load_settings();
-  void saveGif(const QString &fileName, const int delayMs);
   void rotate_event(double rotate_X, double rotate_Y, double rotate_Z);
   void move_event(double move_X, double move_Y, double move_Z);
   void scale_slider(double scale);
@@ -95,6 +96,7 @@ class main_window : public QMainWindow {
   QLabel *amountVnumberLabel;
   QLabel *amountEnumberLabel;
   QPushButton *gifButton;
+  QGifImage *gifImage;
   QTimer *timer;
 
   const int width = 640;

@@ -362,6 +362,8 @@ void main_window::on_gifButton_clicked() {
   qDebug() << "entered";
 
   if (!timer->isActive()) {
+    gifImage = new QGifImage(QSize(width, height));
+    gifImage->setDefaultDelay(100);
     timer->start(100);
     qDebug() << "start";
   }
@@ -375,7 +377,7 @@ void main_window::on_timer_timeout() {
     QImage scaledImage =
         pixmap.scaled(width, height, Qt::KeepAspectRatio).toImage();
     qDebug() << "scaled";
-    capturedFrames.append(scaledImage);
+    gifImage.addFrame(scaledImage);
     qDebug() << "append";
     currentFrame++;
     qDebug() << currentFrame;
@@ -388,11 +390,16 @@ void main_window::on_timer_timeout() {
                                                     "", "GIF Files (*.gif)");
     if (!fileName.isEmpty()) {
       qDebug() << "fname";
-      saveGif(fileName, 100);  // Сохраняем GIF
+      gifImage->save(fileName);
       qDebug() << "saved";
     }
-    capturedFrames.clear();
+    delete gifImage;
+    gifImage = nullptr;
+    qDebug() << "gifImage deleted";
   }
+}
+
+void main_window::saveGif(const QString &fileName, const int delayMs) {
 }
 
 void main_window::save_settings() {
@@ -426,67 +433,6 @@ void main_window::load_settings() {
     projectionTypeComboBox->setCurrentIndex(settings.value("pType", 0).toInt());
     vertexTypeComboBox->setCurrentIndex(settings.value("vType", 0).toInt());
     edgesTypeComboBox->setCurrentIndex(settings.value("eType", 0).toInt());
-}
-
-void main_window::saveGif(const QString &fileName, const int delayMs) {
-  QFile file(fileName);
-  if (!file.open(QIODevice::WriteOnly)) {
-    qWarning() << "Failed to open file for writing:" << fileName;
-    return;
-  }
-
-  QDataStream out(&file);
-  out.setByteOrder(QDataStream::LittleEndian);
-
-  // GIF Header
-  out.writeRawData("GIF89a", 6);  // Signature and version
-
-  // Logical Screen Descriptor
-  out << static_cast<quint16>(width);   // Ширина
-  out << static_cast<quint16>(height);  // Высота
-  out << static_cast<quint8>(
-      0xF7);  // Global Color Table Flag, Color Resolution, and Sort Flag
-  out << static_cast<quint8>(0);  // Background Color Index
-  out << static_cast<quint8>(0);  // Pixel Aspect Ratio
-
-  // Global Color Table (черно-белая палитра для простоты)
-  out << static_cast<quint8>(0x00);  // Черный
-  out << static_cast<quint8>(0x00);  // Черный
-  out << static_cast<quint8>(0x00);  // Черный
-  out << static_cast<quint8>(0xFF);  // Белый
-  out << static_cast<quint8>(0xFF);  // Белый
-  out << static_cast<quint8>(0xFF);  // Белый
-
-  for (const QImage &image : capturedFrames) {
-    // Graphics Control Extension
-    out.writeRawData("\x21\xF9\x04",
-                     3);  // Extension Introducer, Graphics Control Label
-    out << static_cast<quint8>(0);  // No Transparency, Disposal Method 0
-    out << static_cast<quint16>(delayMs /
-                                10);  // Delay Time (in hundredths of a second)
-    out << static_cast<quint8>(0);    // Transparent Color Index (none)
-    out.writeRawData("\x00", 1);      // Block Terminator
-
-    // Image Descriptor
-    out.writeRawData("\x2C", 1);          // Image Separator
-    out << static_cast<quint16>(0);       // Image Left Position
-    out << static_cast<quint16>(0);       // Image Top Position
-    out << static_cast<quint16>(width);   // Image Width
-    out << static_cast<quint16>(height);  // Image Height
-    out << static_cast<quint8>(
-        0);  // Local Color Table Flag, Interlace Flag, Sort Flag
-
-    // Image Data
-    QBuffer buffer;
-    buffer.open(QIODevice::WriteOnly);
-    image.save(&buffer, "BMP");  // Конвертируем кадр в BMP для простоты
-    out.writeRawData(buffer.data().data(), buffer.size());
-  }
-
-  // GIF Trailer
-  out.writeRawData("\x3B", 1);  // GIF Trailer
-
-  file.close();
 }
 
 void main_window::rotate_event(double rotate_X, double rotate_Y,
