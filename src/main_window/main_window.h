@@ -1,18 +1,19 @@
 #ifndef MAIN_WINDOW_H
 #define MAIN_WINDOW_H
 
+#include <qgifimage.h>
+
 #include <QColorDialog>
+#include <QComboBox>
 #include <QFileDialog>
 #include <QLabel>
 #include <QMainWindow>
 #include <QPushButton>
-#include <QSlider>
-#include <QComboBox>
-#include <QSpinBox>
 #include <QSettings>
+#include <QSlider>
+#include <QSpinBox>
 #include <QTimer>
 #include <QVBoxLayout>
-#include "qgifimage.h"
 
 #include "graphics/graphics.h"
 
@@ -103,8 +104,6 @@ class main_window : public QMainWindow {
   QGifImage *gifImage;
   QTimer *timer;
 
-  const int width = 640;
-  const int height = 480;
   const int fps = 10;
   const int duration = 5;
   const int totalFrames = fps * duration;

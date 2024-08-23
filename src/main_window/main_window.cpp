@@ -5,7 +5,7 @@ main_window::main_window(QWidget *parent) : QMainWindow(parent) {
   // setMinimumSize(800, 600);
 
   v = new Viewer;
-  v->setMinimumWidth(600);
+  v->setMinimumWidth(1024);
   v->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
   loadButton = new QPushButton("Выбор файла");
@@ -26,139 +26,173 @@ main_window::main_window(QWidget *parent) : QMainWindow(parent) {
           &main_window::on_gifButton_clicked);
 
   setupUI();
+  qDebug() << "v size: " << size().width() << " " << size().height();
 
   timer = new QTimer(this);
   connect(timer, &QTimer::timeout, this, &main_window::on_timer_timeout);
 }
 
 void main_window::rotation_setup() {
-    rotationXSlider = new QSlider(Qt::Horizontal);
-    rotationXSlider->setRange(-180, 180);
-    connect(rotationXSlider, &QSlider::valueChanged, this,
-            &main_window::on_rotationXSlider_valueChanged);
+  rotationXSlider = new QSlider(Qt::Horizontal);
+  rotationXSlider->setRange(-180, 180);
+  connect(rotationXSlider, &QSlider::valueChanged, this,
+          &main_window::on_rotationXSlider_valueChanged);
 
-    rotationYSlider = new QSlider(Qt::Horizontal);
-    rotationYSlider->setRange(-180, 180);
-    connect(rotationYSlider, &QSlider::valueChanged, this,
-            &main_window::on_rotationYSlider_valueChanged);
+  rotationYSlider = new QSlider(Qt::Horizontal);
+  rotationYSlider->setRange(-180, 180);
+  connect(rotationYSlider, &QSlider::valueChanged, this,
+          &main_window::on_rotationYSlider_valueChanged);
 
-    rotationZSlider = new QSlider(Qt::Horizontal);
-    rotationZSlider->setRange(-180, 180);
-    connect(rotationZSlider, &QSlider::valueChanged, this,
-            &main_window::on_rotationZSlider_valueChanged);
+  rotationZSlider = new QSlider(Qt::Horizontal);
+  rotationZSlider->setRange(-180, 180);
+  connect(rotationZSlider, &QSlider::valueChanged, this,
+          &main_window::on_rotationZSlider_valueChanged);
 
-    rotationXSpinBox = new QSpinBox;
-    rotationXSpinBox->setRange(-180, 180);
-    connect(rotationXSpinBox, &QSpinBox::valueChanged, this,
-            &main_window::on_rotationXSpinBox_valueChanged);
+  rotationXSpinBox = new QSpinBox;
+  rotationXSpinBox->setRange(-180, 180);
+  connect(rotationXSpinBox, &QSpinBox::valueChanged, this,
+          &main_window::on_rotationXSpinBox_valueChanged);
 
-    rotationYSpinBox = new QSpinBox;
-    rotationYSpinBox->setRange(-180, 180);
-    connect(rotationYSpinBox, &QSpinBox::valueChanged, this,
-            &main_window::on_rotationYSpinBox_valueChanged);
+  rotationYSpinBox = new QSpinBox;
+  rotationYSpinBox->setRange(-180, 180);
+  connect(rotationYSpinBox, &QSpinBox::valueChanged, this,
+          &main_window::on_rotationYSpinBox_valueChanged);
 
-    rotationZSpinBox = new QSpinBox;
-    rotationZSpinBox->setRange(-180, 180);
-    connect(rotationZSpinBox, &QSpinBox::valueChanged, this,
-            &main_window::on_rotationZSpinBox_valueChanged);
+  rotationZSpinBox = new QSpinBox;
+  rotationZSpinBox->setRange(-180, 180);
+  connect(rotationZSpinBox, &QSpinBox::valueChanged, this,
+          &main_window::on_rotationZSpinBox_valueChanged);
 }
 
 void main_window::move_setup() {
-    moveXSlider = new QSlider(Qt::Horizontal);
-    moveXSlider->setRange(-180, 180);
-    connect(moveXSlider, &QSlider::valueChanged, this,
-            &main_window::on_moveXSlider_valueChanged);
+  moveXSlider = new QSlider(Qt::Horizontal);
+  moveXSlider->setRange(-180, 180);
+  connect(moveXSlider, &QSlider::valueChanged, this,
+          &main_window::on_moveXSlider_valueChanged);
 
-    moveYSlider = new QSlider(Qt::Horizontal);
-    moveYSlider->setRange(-180, 180);
-    connect(moveYSlider, &QSlider::valueChanged, this,
-            &main_window::on_moveYSlider_valueChanged);
+  moveYSlider = new QSlider(Qt::Horizontal);
+  moveYSlider->setRange(-180, 180);
+  connect(moveYSlider, &QSlider::valueChanged, this,
+          &main_window::on_moveYSlider_valueChanged);
 
-    moveZSlider = new QSlider(Qt::Horizontal);
-    moveZSlider->setRange(-180, 180);
-    connect(moveZSlider, &QSlider::valueChanged, this,
-            &main_window::on_moveZSlider_valueChanged);
+  moveZSlider = new QSlider(Qt::Horizontal);
+  moveZSlider->setRange(-180, 180);
+  connect(moveZSlider, &QSlider::valueChanged, this,
+          &main_window::on_moveZSlider_valueChanged);
 
-    moveXSpinBox = new QSpinBox;
-    moveXSpinBox->setRange(-10000, 10000);
-    connect(moveXSpinBox, &QSpinBox::valueChanged, this,
-            &main_window::on_moveXSpinBox_valueChanged);
+  moveXSpinBox = new QSpinBox;
+  moveXSpinBox->setRange(-10000, 10000);
+  connect(moveXSpinBox, &QSpinBox::valueChanged, this,
+          &main_window::on_moveXSpinBox_valueChanged);
 
-    moveYSpinBox = new QSpinBox;
-    moveYSpinBox->setRange(-10000, 10000);
-    connect(moveYSpinBox, &QSpinBox::valueChanged, this,
-            &main_window::on_moveYSpinBox_valueChanged);
+  moveYSpinBox = new QSpinBox;
+  moveYSpinBox->setRange(-10000, 10000);
+  connect(moveYSpinBox, &QSpinBox::valueChanged, this,
+          &main_window::on_moveYSpinBox_valueChanged);
 
-    moveZSpinBox = new QSpinBox;
-    moveZSpinBox->setRange(-10000, 10000);
-    connect(moveZSpinBox, &QSpinBox::valueChanged, this,
-            &main_window::on_moveZSpinBox_valueChanged);
+  moveZSpinBox = new QSpinBox;
+  moveZSpinBox->setRange(-10000, 10000);
+  connect(moveZSpinBox, &QSpinBox::valueChanged, this,
+          &main_window::on_moveZSpinBox_valueChanged);
 }
 
 void main_window::scale_setup() {
-    scaleSlider = new QSlider(Qt::Horizontal);
-    scaleSlider->setRange(-180, 180);
-    connect(scaleSlider, &QSlider::valueChanged, this,
-            &main_window::on_scaleSlider_valueChanged);
+  scaleSlider = new QSlider(Qt::Horizontal);
+  scaleSlider->setRange(-180, 180);
+  connect(scaleSlider, &QSlider::valueChanged, this,
+          &main_window::on_scaleSlider_valueChanged);
 
-    increaseScaleButton = new QPushButton("+");
-    increaseScaleButton->setFixedSize(QSize(20, 20));
-    connect(increaseScaleButton, &QPushButton::clicked, this,
-            &main_window::on_increaseScaleButton_clicked);
+  increaseScaleButton = new QPushButton("+");
+  increaseScaleButton->setFixedSize(QSize(20, 20));
+  connect(increaseScaleButton, &QPushButton::clicked, this,
+          &main_window::on_increaseScaleButton_clicked);
 
-    decreaseScaleButton = new QPushButton("-");
-    decreaseScaleButton->setFixedSize(QSize(20, 20));
-    connect(decreaseScaleButton, &QPushButton::clicked, this,
-            &main_window::on_decreaseScaleButton_clicked);
+  decreaseScaleButton = new QPushButton("-");
+  decreaseScaleButton->setFixedSize(QSize(20, 20));
+  connect(decreaseScaleButton, &QPushButton::clicked, this,
+          &main_window::on_decreaseScaleButton_clicked);
 }
 
 void main_window::appearance_setup() {
-    backgroundColorButton = new QPushButton("Фон");
-    connect(backgroundColorButton, &QPushButton::clicked, this,
-            &main_window::on_backgroundColorButton_clicked);
+  backgroundColorButton = new QPushButton("Фон");
+  connect(backgroundColorButton, &QPushButton::clicked, this,
+          &main_window::on_backgroundColorButton_clicked);
 
-    vertexColorButton = new QPushButton("Вершины");
-    connect(vertexColorButton, &QPushButton::clicked, this,
-            &main_window::on_vertexColorButton_clicked);
+  vertexColorButton = new QPushButton("Вершины");
+  connect(vertexColorButton, &QPushButton::clicked, this,
+          &main_window::on_vertexColorButton_clicked);
 
-    edgesColorButton = new QPushButton("Ребра");
-    connect(edgesColorButton, &QPushButton::clicked, this,
-            &main_window::on_edgesColorButton_clicked);
+  edgesColorButton = new QPushButton("Ребра");
+  connect(edgesColorButton, &QPushButton::clicked, this,
+          &main_window::on_edgesColorButton_clicked);
 
-    vertexSizeSlider = new QSlider(Qt::Horizontal);
-    vertexSizeSlider->setRange(1, 20);
-    connect(vertexSizeSlider, &QSlider::valueChanged, this,
-            &main_window::on_vertexSizeSlider_valueChanged);
+  vertexSizeSlider = new QSlider(Qt::Horizontal);
+  vertexSizeSlider->setRange(1, 20);
+  connect(vertexSizeSlider, &QSlider::valueChanged, this,
+          &main_window::on_vertexSizeSlider_valueChanged);
 
-    edgesWidthSlider = new QSlider(Qt::Horizontal);
-    edgesWidthSlider->setRange(1, 20);
-    connect(edgesWidthSlider, &QSlider::valueChanged, this,
-            &main_window::on_edgesWidthSlider_valueChanged);
+  edgesWidthSlider = new QSlider(Qt::Horizontal);
+  edgesWidthSlider->setRange(1, 20);
+  connect(edgesWidthSlider, &QSlider::valueChanged, this,
+          &main_window::on_edgesWidthSlider_valueChanged);
 
-    projectionTypeComboBox = new QComboBox;
-    projectionTypeComboBox->addItem("Центральная");
-    projectionTypeComboBox->addItem("Параллельная");
-    connect(projectionTypeComboBox, &QComboBox::currentIndexChanged, this,
-            &main_window::on_projectionTypeComboBox_indexChanged);
+  projectionTypeComboBox = new QComboBox;
+  projectionTypeComboBox->addItem("Центральная");
+  projectionTypeComboBox->addItem("Параллельная");
+  connect(projectionTypeComboBox, &QComboBox::currentIndexChanged, this,
+          &main_window::on_projectionTypeComboBox_indexChanged);
 
-    vertexTypeComboBox = new QComboBox;
-    vertexTypeComboBox->addItem("Отсутствуют");
-    vertexTypeComboBox->addItem("Круг");
-    vertexTypeComboBox->addItem("Квадрат");
-    connect(vertexTypeComboBox, &QComboBox::currentIndexChanged, this,
-            &main_window::on_vertexTypeComboBox_indexChanged);
+  vertexTypeComboBox = new QComboBox;
+  vertexTypeComboBox->addItem("Отсутствуют");
+  vertexTypeComboBox->addItem("Круг");
+  vertexTypeComboBox->addItem("Квадрат");
+  connect(vertexTypeComboBox, &QComboBox::currentIndexChanged, this,
+          &main_window::on_vertexTypeComboBox_indexChanged);
 
-    edgesTypeComboBox = new QComboBox;
-    edgesTypeComboBox->addItem("Сплошные");
-    edgesTypeComboBox->addItem("Штриховка");
-    connect(edgesTypeComboBox, &QComboBox::currentIndexChanged, this,
-            &main_window::on_edgesTypeComboBox_indexChanged);
+  edgesTypeComboBox = new QComboBox;
+  edgesTypeComboBox->addItem("Сплошные");
+  edgesTypeComboBox->addItem("Штриховка");
+  connect(edgesTypeComboBox, &QComboBox::currentIndexChanged, this,
+          &main_window::on_edgesTypeComboBox_indexChanged);
 
-    load_settings();
+  load_settings();
 }
 
 main_window::~main_window() {
   save_settings();
+  delete v;
+  delete loadButton;
+  delete rotationXSlider;
+  delete rotationYSlider;
+  delete rotationZSlider;
+  delete rotationXSpinBox;
+  delete rotationYSpinBox;
+  delete rotationZSpinBox;
+  delete moveXSlider;
+  delete moveYSlider;
+  delete moveZSlider;
+  delete moveXSpinBox;
+  delete moveYSpinBox;
+  delete moveZSpinBox;
+  delete scaleSlider;
+  delete increaseScaleButton;
+  delete decreaseScaleButton;
+  delete backgroundColorButton;
+  delete vertexColorButton;
+  delete edgesColorButton;
+  delete vertexSizeSlider;
+  delete edgesWidthSlider;
+  delete projectionTypeComboBox;
+  delete vertexTypeComboBox;
+  delete edgesTypeComboBox;
+  delete screenshotButton;
+  delete fnameLabel;
+  delete amountVnumberLabel;
+  delete amountEnumberLabel;
+  delete gifButton;
+  if (gifImage != nullptr) delete gifImage;
+  if (timer->isActive()) timer->stop();
+  delete timer;
 }
 
 void main_window::on_loadButton_clicked() {
@@ -230,39 +264,48 @@ void main_window::on_moveZSlider_valueChanged(int value) {
 }
 
 void main_window::on_moveXSpinBox_valueChanged(int value) {
-  if ((value != -180 || moveXSlider->value() != -180) && (value != 180 || moveXSlider->value() != 180)) {
+  if ((value != -180 || moveXSlider->value() != -180) &&
+      (value != 180 || moveXSlider->value() != 180)) {
     if (value < -180) {
       if (moveXSlider->value() != -180) moveXSlider->setValue(-180);
     } else if (value > 180) {
       if (moveXSlider->value() != 180) moveXSlider->setValue(180);
-    } else if (moveXSlider->value() != value) moveXSlider->setValue(value);
+    } else if (moveXSlider->value() != value)
+      moveXSlider->setValue(value);
     move_event(value - curr_moveX, 0, 0);
     curr_moveX = value;
-  } else moveXSpinBox->setValue(curr_moveX);
+  } else
+    moveXSpinBox->setValue(curr_moveX);
 }
 
 void main_window::on_moveYSpinBox_valueChanged(int value) {
-    if ((value != -180 || moveYSlider->value() != -180) && (value != 180 || moveYSlider->value() != 180)) {
-        if (value < -180) {
-            if (moveYSlider->value() != -180) moveYSlider->setValue(-180);
-        } else if (value > 180) {
-            if (moveYSlider->value() != 180) moveYSlider->setValue(180);
-        } else if (moveYSlider->value() != value) moveYSlider->setValue(value);
-        move_event(0, value - curr_moveY, 0);
-        curr_moveY = value;
-    } else moveYSpinBox->setValue(curr_moveY);
+  if ((value != -180 || moveYSlider->value() != -180) &&
+      (value != 180 || moveYSlider->value() != 180)) {
+    if (value < -180) {
+      if (moveYSlider->value() != -180) moveYSlider->setValue(-180);
+    } else if (value > 180) {
+      if (moveYSlider->value() != 180) moveYSlider->setValue(180);
+    } else if (moveYSlider->value() != value)
+      moveYSlider->setValue(value);
+    move_event(0, value - curr_moveY, 0);
+    curr_moveY = value;
+  } else
+    moveYSpinBox->setValue(curr_moveY);
 }
 
 void main_window::on_moveZSpinBox_valueChanged(int value) {
-    if ((value != -180 || moveZSlider->value() != -180) && (value != 180 || moveZSlider->value() != 180)) {
-        if (value < -180) {
-            if (moveZSlider->value() != -180) moveZSlider->setValue(-180);
-        } else if (value > 180) {
-            if (moveZSlider->value() != 180) moveZSlider->setValue(180);
-        } else if (moveZSlider->value() != value) moveZSlider->setValue(value);
-        move_event(0, 0, value - curr_moveZ);
-        curr_moveZ = value;
-    } else moveZSpinBox->setValue(curr_moveZ);
+  if ((value != -180 || moveZSlider->value() != -180) &&
+      (value != 180 || moveZSlider->value() != 180)) {
+    if (value < -180) {
+      if (moveZSlider->value() != -180) moveZSlider->setValue(-180);
+    } else if (value > 180) {
+      if (moveZSlider->value() != 180) moveZSlider->setValue(180);
+    } else if (moveZSlider->value() != value)
+      moveZSlider->setValue(value);
+    move_event(0, 0, value - curr_moveZ);
+    curr_moveZ = value;
+  } else
+    moveZSpinBox->setValue(curr_moveZ);
 }
 
 void main_window::on_scaleSlider_valueChanged(int value) {
@@ -344,7 +387,8 @@ void main_window::on_screenshotButton_clicked() {
   v->render(&pixmap);
 
   QStringList filters;
-  filters << "JPEG Files (*.jpg)" << "BMP Files (*.bmp)";
+  filters << "JPEG Files (*.jpg)"
+          << "BMP Files (*.bmp)";
 
   QFileDialog dialog(this);
   dialog.setNameFilters(filters);
@@ -373,7 +417,7 @@ void main_window::on_gifButton_clicked() {
   qDebug() << "entered";
 
   if (!timer->isActive()) {
-    gifImage = new QGifImage(QSize(width, height));
+    gifImage = new QGifImage();
     gifImage->setDefaultDelay(100);
     timer->start(100);
     qDebug() << "start";
@@ -386,9 +430,12 @@ void main_window::on_timer_timeout() {
     v->render(&pixmap);
     qDebug() << "render";
     QImage scaledImage =
-        pixmap.scaled(width, height, Qt::KeepAspectRatio).toImage();
+        pixmap
+            .scaled(pixmap.width() * 0.625, pixmap.height() * 0.625,
+                    Qt::KeepAspectRatio)
+            .toImage();
     qDebug() << "scaled";
-    gifImage.addFrame(scaledImage);
+    gifImage->addFrame(scaledImage);
     qDebug() << "append";
     currentFrame++;
     qDebug() << currentFrame;
@@ -411,40 +458,46 @@ void main_window::on_timer_timeout() {
 }
 
 void main_window::save_settings() {
-    QSettings settings("School21", "3DViewer_v1.0");
-    settings.setValue("bgColor", QColor(static_cast<int>(v->bg_r * 255), static_cast<int>(v->bg_g * 255), static_cast<int>(v->bg_b * 255)));
-    settings.setValue("vColor", QColor(static_cast<int>(v->vertex_r * 255), static_cast<int>(v->vertex_g * 255), static_cast<int>(v->vertex_b * 255)));
-    settings.setValue("eColor", QColor(static_cast<int>(v->polygon_r * 255), static_cast<int>(v->polygon_g * 255), static_cast<int>(v->polygon_b * 255)));
-    settings.setValue("vSize", v->vertex_size);
-    settings.setValue("eWidth", v->line_width);
-    settings.setValue("pType", v->projection_type);
-    settings.setValue("vType", v->vertex_type);
-    settings.setValue("eType", v->line_type);
+  QSettings settings("School21", "3DViewer_v1.0");
+  settings.setValue("bgColor", QColor(static_cast<int>(v->bg_r * 255),
+                                      static_cast<int>(v->bg_g * 255),
+                                      static_cast<int>(v->bg_b * 255)));
+  settings.setValue("vColor", QColor(static_cast<int>(v->vertex_r * 255),
+                                     static_cast<int>(v->vertex_g * 255),
+                                     static_cast<int>(v->vertex_b * 255)));
+  settings.setValue("eColor", QColor(static_cast<int>(v->polygon_r * 255),
+                                     static_cast<int>(v->polygon_g * 255),
+                                     static_cast<int>(v->polygon_b * 255)));
+  settings.setValue("vSize", v->vertex_size);
+  settings.setValue("eWidth", v->line_width);
+  settings.setValue("pType", v->projection_type);
+  settings.setValue("vType", v->vertex_type);
+  settings.setValue("eType", v->line_type);
 }
 
 void main_window::load_settings() {
-    QSettings settings("School21", "3DViewer_v1.0");
-    QColor *bgColor = new QColor(settings.value("bgColor", "#FFFFFF").toString());
-    QColor *vColor = new QColor(settings.value("vColor", "#00FF00").toString());
-    QColor *eColor = new QColor(settings.value("eColor", "#0000FF").toString());
-    v->bg_r = bgColor->redF();
-    v->bg_g = bgColor->greenF();
-    v->bg_b = bgColor->blueF();
-    v->vertex_r = vColor->redF();
-    v->vertex_g = vColor->greenF();
-    v->vertex_b = vColor->blueF();
-    v->polygon_r = eColor->redF();
-    v->polygon_g = eColor->greenF();
-    v->polygon_b = eColor->blueF();
-    vertexSizeSlider->setValue(settings.value("vSize", 1).toInt());
-    edgesWidthSlider->setValue(settings.value("eWidth", 1).toInt());
-    projectionTypeComboBox->setCurrentIndex(settings.value("pType", 0).toInt());
-    vertexTypeComboBox->setCurrentIndex(settings.value("vType", 0).toInt());
-    edgesTypeComboBox->setCurrentIndex(settings.value("eType", 0).toInt());
+  QSettings settings("School21", "3DViewer_v1.0");
+  QColor bgColor(settings.value("bgColor", "#FFFFFF").toString());
+  QColor vColor(settings.value("vColor", "#00FF00").toString());
+  QColor eColor(settings.value("eColor", "#0000FF").toString());
+  v->bg_r = bgColor.redF();
+  v->bg_g = bgColor.greenF();
+  v->bg_b = bgColor.blueF();
+  v->vertex_r = vColor.redF();
+  v->vertex_g = vColor.greenF();
+  v->vertex_b = vColor.blueF();
+  v->polygon_r = eColor.redF();
+  v->polygon_g = eColor.greenF();
+  v->polygon_b = eColor.blueF();
+  vertexSizeSlider->setValue(settings.value("vSize", 1).toInt());
+  edgesWidthSlider->setValue(settings.value("eWidth", 1).toInt());
+  projectionTypeComboBox->setCurrentIndex(settings.value("pType", 0).toInt());
+  vertexTypeComboBox->setCurrentIndex(settings.value("vType", 0).toInt());
+  edgesTypeComboBox->setCurrentIndex(settings.value("eType", 0).toInt());
 }
 
 void main_window::rotate_event(double rotate_X, double rotate_Y,
-                                double rotate_Z) {
+                               double rotate_Z) {
   v->new_data->alpha_x = rotate_X;
   v->new_data->alpha_y = rotate_Y;
   v->new_data->alpha_z = rotate_Z;
@@ -472,8 +525,6 @@ void main_window::setupUI() {
   scaleLayout->addWidget(decreaseScaleButton);
   scaleLayout->addWidget(scaleSlider);
   scaleLayout->addWidget(increaseScaleButton);
-
-
 
   QSpacerItem *spacer =
       new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
@@ -535,61 +586,61 @@ void main_window::setupSliderBox(QVBoxLayout *rightColumnLayout, bool rotate) {
 }
 
 void main_window::setupSettings(QVBoxLayout *rightColumnLayout) {
-    QLabel *colorLabel = new QLabel("Цветовая палитра");
-    QHBoxLayout *colorButtonsLayout = new QHBoxLayout;
-    colorButtonsLayout->addWidget(backgroundColorButton);
-    colorButtonsLayout->addWidget(vertexColorButton);
-    colorButtonsLayout->addWidget(edgesColorButton);
+  QLabel *colorLabel = new QLabel("Цветовая палитра");
+  QHBoxLayout *colorButtonsLayout = new QHBoxLayout;
+  colorButtonsLayout->addWidget(backgroundColorButton);
+  colorButtonsLayout->addWidget(vertexColorButton);
+  colorButtonsLayout->addWidget(edgesColorButton);
 
-    QVBoxLayout *colorLayout = new QVBoxLayout;
-    colorLayout->addWidget(colorLabel);
-    colorLayout->addLayout(colorButtonsLayout);
+  QVBoxLayout *colorLayout = new QVBoxLayout;
+  colorLayout->addWidget(colorLabel);
+  colorLayout->addLayout(colorButtonsLayout);
 
-    QFrame *colorFrame = new QFrame;
-    colorFrame->setFrameShape(QFrame::Box);
-    colorFrame->setLineWidth(1);
-    colorFrame->setLayout(colorLayout);
+  QFrame *colorFrame = new QFrame;
+  colorFrame->setFrameShape(QFrame::Box);
+  colorFrame->setLineWidth(1);
+  colorFrame->setLayout(colorLayout);
 
-    QLabel *vertexSizeLabel = new QLabel("Размер вершин:");
-    QLabel *edgesWidthLabel = new QLabel("Толщина ребер:");
+  QLabel *vertexSizeLabel = new QLabel("Размер вершин:");
+  QLabel *edgesWidthLabel = new QLabel("Толщина ребер:");
 
-    QGridLayout *resizeLayout = new QGridLayout;
-    resizeLayout->addWidget(vertexSizeLabel, 0, 0);
-    resizeLayout->addWidget(vertexSizeSlider, 0, 1);
-    resizeLayout->addWidget(edgesWidthLabel, 1, 0);
-    resizeLayout->addWidget(edgesWidthSlider, 1, 1);
+  QGridLayout *resizeLayout = new QGridLayout;
+  resizeLayout->addWidget(vertexSizeLabel, 0, 0);
+  resizeLayout->addWidget(vertexSizeSlider, 0, 1);
+  resizeLayout->addWidget(edgesWidthLabel, 1, 0);
+  resizeLayout->addWidget(edgesWidthSlider, 1, 1);
 
-    QLabel *typeLabel = new QLabel("Настройка отображения");
+  QLabel *typeLabel = new QLabel("Настройка отображения");
 
-    QLabel *projectionTypeLabel = new QLabel("Проекция:");
-    QHBoxLayout *projectionTypeLayout = new QHBoxLayout;
-    projectionTypeLayout->addWidget(projectionTypeLabel);
-    projectionTypeLayout->addWidget(projectionTypeComboBox);
+  QLabel *projectionTypeLabel = new QLabel("Проекция:");
+  QHBoxLayout *projectionTypeLayout = new QHBoxLayout;
+  projectionTypeLayout->addWidget(projectionTypeLabel);
+  projectionTypeLayout->addWidget(projectionTypeComboBox);
 
-    QLabel *vertexTypeLabel = new QLabel("Вершины:");
-    QHBoxLayout *vertexTypeLayout = new QHBoxLayout;
-    vertexTypeLayout->addWidget(vertexTypeLabel);
-    vertexTypeLayout->addWidget(vertexTypeComboBox);
+  QLabel *vertexTypeLabel = new QLabel("Вершины:");
+  QHBoxLayout *vertexTypeLayout = new QHBoxLayout;
+  vertexTypeLayout->addWidget(vertexTypeLabel);
+  vertexTypeLayout->addWidget(vertexTypeComboBox);
 
-    QLabel *edgesTypeLabel = new QLabel("Ребра:");
-    QHBoxLayout *edgesTypeLayout = new QHBoxLayout;
-    edgesTypeLayout->addWidget(edgesTypeLabel);
-    edgesTypeLayout->addWidget(edgesTypeComboBox);
+  QLabel *edgesTypeLabel = new QLabel("Ребра:");
+  QHBoxLayout *edgesTypeLayout = new QHBoxLayout;
+  edgesTypeLayout->addWidget(edgesTypeLabel);
+  edgesTypeLayout->addWidget(edgesTypeComboBox);
 
-    QVBoxLayout *typeLayout = new QVBoxLayout;
-    typeLayout->addWidget(typeLabel);
-    typeLayout->addLayout(projectionTypeLayout);
-    typeLayout->addLayout(vertexTypeLayout);
-    typeLayout->addLayout(edgesTypeLayout);
+  QVBoxLayout *typeLayout = new QVBoxLayout;
+  typeLayout->addWidget(typeLabel);
+  typeLayout->addLayout(projectionTypeLayout);
+  typeLayout->addLayout(vertexTypeLayout);
+  typeLayout->addLayout(edgesTypeLayout);
 
-    QFrame *typeFrame = new QFrame;
-    typeFrame->setFrameShape(QFrame::Box);
-    typeFrame->setLineWidth(1);
-    typeFrame->setLayout(typeLayout);
+  QFrame *typeFrame = new QFrame;
+  typeFrame->setFrameShape(QFrame::Box);
+  typeFrame->setLineWidth(1);
+  typeFrame->setLayout(typeLayout);
 
-    rightColumnLayout->addWidget(colorFrame);
-    rightColumnLayout->addLayout(resizeLayout);
-    rightColumnLayout->addWidget(typeFrame);
+  rightColumnLayout->addWidget(colorFrame);
+  rightColumnLayout->addLayout(resizeLayout);
+  rightColumnLayout->addWidget(typeFrame);
 }
 
 void main_window::setupFileInfo(QVBoxLayout *rightColumnLayout) {

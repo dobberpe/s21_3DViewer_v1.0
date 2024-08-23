@@ -51,73 +51,66 @@ void Viewer::mousePressEvent(QMouseEvent *event) {
 }
 
 void Viewer::paintGL() {
-    glClearColor(bg_r, bg_g, bg_b, 1);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
+  glClearColor(bg_r, bg_g, bg_b, 1);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
 
-    float aspect = static_cast<float>(width()) / static_cast<float>(height());
+  float aspect = static_cast<float>(width()) / static_cast<float>(height());
 
-    if (projection_type == CENTRAL_PR) {
-        glFrustum(-aspect, aspect, -1.0f, 1.0f, 1.0f, move_coef * 8);
-        glTranslatef(0, 0, -move_coef / 2);
-    } else {
-        float left = -move_coef * aspect;
-        float right = move_coef * aspect;
-        float bottom = -move_coef;
-        float top = move_coef;
-        glOrtho(left, right, bottom, top, -move_coef, move_coef * 100);
-    }
+  if (projection_type == CENTRAL_PR) {
+    glFrustum(-aspect, aspect, -1.0f, 1.0f, 1.0f, move_coef * 8);
+    glTranslatef(0, 0, -move_coef / 2);
+  } else {
+    float left = -move_coef * aspect;
+    float right = move_coef * aspect;
+    float bottom = -move_coef;
+    float top = move_coef;
+    glOrtho(left, right, bottom, top, -move_coef, move_coef * 100);
+  }
 
-    // Рисование
-    glEnableClientState(GL_VERTEX_ARRAY);
-    if (vertex_type != NONE) {
-        if (vertex_type == ROUND) glEnable(GL_POINT_SMOOTH);
-        glVertexPointer(3, GL_DOUBLE, 0, new_data->vertex);
-        glPointSize(vertex_size);
-        glColor3f(vertex_r, vertex_g, vertex_b);
-        glDrawArrays(GL_POINTS, 0, new_data->amount_vertex);
-        if (vertex_type == ROUND) glDisable(GL_POINT_SMOOTH);
-    }
+  // Рисование
+  glEnableClientState(GL_VERTEX_ARRAY);
+  if (vertex_type != NONE) {
+    if (vertex_type == ROUND) glEnable(GL_POINT_SMOOTH);
+    glVertexPointer(3, GL_DOUBLE, 0, new_data->vertex);
+    glPointSize(vertex_size);
+    glColor3f(vertex_r, vertex_g, vertex_b);
+    glDrawArrays(GL_POINTS, 0, new_data->amount_vertex);
+    if (vertex_type == ROUND) glDisable(GL_POINT_SMOOTH);
+  }
 
-    if (line_type == DASH_LINE) {
-        glEnable(GL_LINE_STIPPLE);
-        glLineStipple(1, 255);
-    }
-    glLineWidth(line_width);
-    glColor3f(polygon_r, polygon_g, polygon_b);
-    for (int i = 0; i < new_data->amount_polygon; i++)
-        glDrawElements(GL_LINES, new_data->polygon[i].amount_p, GL_UNSIGNED_INT, new_data->polygon[i].vertex_p);
-    if (line_type == DASH_LINE) glDisable(GL_LINE_STIPPLE);
-    glDisableClientState(GL_VERTEX_ARRAY);
+  if (line_type == DASH_LINE) {
+    glEnable(GL_LINE_STIPPLE);
+    glLineStipple(1, 255);
+  }
+  glLineWidth(line_width);
+  glColor3f(polygon_r, polygon_g, polygon_b);
+  for (int i = 0; i < new_data->amount_polygon; i++)
+    glDrawElements(GL_LINES, new_data->polygon[i].amount_p, GL_UNSIGNED_INT,
+                   new_data->polygon[i].vertex_p);
+  if (line_type == DASH_LINE) glDisable(GL_LINE_STIPPLE);
+  glDisableClientState(GL_VERTEX_ARRAY);
 }
 
 void Viewer::resizeGL(int w, int h) {
-    glViewport(0, 0, w, h);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
+  qDebug() << w << " " << h;
+  glViewport(0, 0, w, h);
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
 
-    float aspect = static_cast<float>(w) / static_cast<float>(h);
-    float move_coef_scaled = move_coef;
+  float aspect = static_cast<float>(w) / static_cast<float>(h);
+  float move_coef_scaled = move_coef;
 
-    if (projection_type == CENTRAL_PR) {
-        glFrustum(-aspect, aspect, -1.0f, 1.0f, 1.0f, move_coef_scaled * 8);
-        glTranslatef(0, 0, -move_coef_scaled / 2);
-    } else {
-        float left = -move_coef_scaled * aspect;
-        float right = move_coef_scaled * aspect;
-        float bottom = -move_coef_scaled;
-        float top = move_coef_scaled;
-        glOrtho(left, right, bottom, top, -move_coef_scaled, move_coef_scaled * 100);
-    }
+  if (projection_type == CENTRAL_PR) {
+    glFrustum(-aspect, aspect, -1.0f, 1.0f, 1.0f, move_coef_scaled * 8);
+    glTranslatef(0, 0, -move_coef_scaled / 2);
+  } else {
+    float left = -move_coef_scaled * aspect;
+    float right = move_coef_scaled * aspect;
+    float bottom = -move_coef_scaled;
+    float top = move_coef_scaled;
+    glOrtho(left, right, bottom, top, -move_coef_scaled,
+            move_coef_scaled * 100);
+  }
 }
-
-// void Viewer::resizeEvent(QResizeEvent *event) {
-//     int newWidth = event->size().width();
-//     int newHeight = event->size().height();
-//     int side = qMin(newWidth, newHeight);
-//     int offsetX = (newWidth - side) / 2;
-//     int offsetY = (newHeight - side) / 2;
-//     setGeometry(offsetX, offsetY, side, side);
-//     QOpenGLWidget::resizeEvent(event);
-// }
