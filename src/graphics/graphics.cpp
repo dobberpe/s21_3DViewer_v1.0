@@ -94,7 +94,6 @@ void Viewer::paintGL() {
 }
 
 void Viewer::resizeGL(int w, int h) {
-  qDebug() << w << " " << h;
   glViewport(0, 0, w, h);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();

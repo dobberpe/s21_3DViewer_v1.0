@@ -22,11 +22,11 @@ main_window::main_window(QWidget *parent) : QMainWindow(parent) {
           &main_window::on_screenshotButton_clicked);
 
   gifButton = new QPushButton("Запись экрана");
+  gifButton->setCheckable(true);
   connect(gifButton, &QPushButton::clicked, this,
           &main_window::on_gifButton_clicked);
 
   setupUI();
-  qDebug() << "v size: " << size().width() << " " << size().height();
 
   timer = new QTimer(this);
   connect(timer, &QTimer::timeout, this, &main_window::on_timer_timeout);
@@ -414,13 +414,10 @@ void main_window::on_screenshotButton_clicked() {
 }
 
 void main_window::on_gifButton_clicked() {
-  qDebug() << "entered";
-
   if (!timer->isActive()) {
     gifImage = new QGifImage();
     gifImage->setDefaultDelay(100);
     timer->start(100);
-    qDebug() << "start";
   }
 }
 
@@ -428,32 +425,24 @@ void main_window::on_timer_timeout() {
   if (currentFrame < totalFrames) {
     QPixmap pixmap(v->size());
     v->render(&pixmap);
-    qDebug() << "render";
     QImage scaledImage =
         pixmap
             .scaled(pixmap.width() * 0.625, pixmap.height() * 0.625,
                     Qt::KeepAspectRatio)
             .toImage();
-    qDebug() << "scaled";
     gifImage->addFrame(scaledImage);
-    qDebug() << "append";
     currentFrame++;
-    qDebug() << currentFrame;
   } else {
-    qDebug() << "total " << totalFrames;
     timer->stop();
+    gifButton->setChecked(false);
     currentFrame = 0;
-    qDebug() << "Captured all frames, now saving GIF";
     QString fileName = QFileDialog::getSaveFileName(nullptr, "Сохранение GIF",
                                                     "", "GIF Files (*.gif)");
     if (!fileName.isEmpty()) {
-      qDebug() << "fname";
       gifImage->save(fileName);
-      qDebug() << "saved";
     }
     delete gifImage;
     gifImage = nullptr;
-    qDebug() << "gifImage deleted";
   }
 }
 
