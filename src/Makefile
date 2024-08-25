@@ -20,7 +20,6 @@ endif
 CLANG_FILE = ../materials/linters/.clang-format
 PARSER = main
 TEST = test_laucnher
-ARG ?= $(PARSER)
 #==============================================================================#
 
 #=============================== DIRECTORY NAMES ==============================#
@@ -31,6 +30,8 @@ COMMON_DIR = common
 TEST_DIR = tests
 DVI_DIR = docs
 DIST_DIR = distribution
+QTMAIN = main_window
+QTGRAPHICS = graphics
 #==============================================================================#
 
 #====================== LIST OF FILE AND DIRS IN MODULES ======================#
@@ -56,7 +57,7 @@ uninstall:
 	@rm -rf $(BUILD_DIR)
 	@echo "successfuly uninstalled"
 
-test: clean
+tests: clean
 	$(CC) $(CFLAGS) $(SOURCE_TEST) $(SOURCE_PARSER) $(SOURCE_TRANSFORM) -o $(TEST) $(GFLAGS)
 	@echo "\nrunning tests..."
 	@./$(TEST)
@@ -66,7 +67,7 @@ test: clean
 gcov_report: clean
 	$(CC) $(CFLAGS) $(SOURCE_TEST) $(SOURCE_PARSER) $(SOURCE_TRANSFORM) -o $(TEST) $(GFLAGS) --coverage
 	@./$(TEST)
-	@lcov -t "tests" -o tests.info -c -d . -rc lcov_branch_coverage=1 --exclude "$(PWD)/tests/*"
+	@lcov -t "tests" -o tests.info -c -d . -rc lcov_branch_coverage=1 --exclude "$(PWD)/tests/*" --exclude "$(PWD)/QtGifImage/*"
 	@genhtml -o report tests.info -rc lcov_branch_coverage=1
 	@rm -rf *.gcno *.gcda *.gcov
 
@@ -83,12 +84,7 @@ format_check:
 	@echo "checking format..."
 
 cppcheck:
-	cppcheck --enable=all --suppress=missingIncludeSystem $(PARSER_DIR)/* $(TRANSFORM_DIR)/* $(COMMON_DIR)/* $(TEST_DIR)/* ./*cpp ./*h
-
-valgrind:
-	valgrind -s -q --tool=memcheck --leak-check=yes --track-origins=yes --show-leak-kinds=all --verbose --log-file=valgrind_out.txt ./$(ARG)
-	@cat valgrind_out.txt
-	@rm valgrind_out.txt
+	cppcheck --enable=all --suppress=missingIncludeSystem $(PARSER_DIR)/* $(TRANSFORM_DIR)/* $(COMMON_DIR)/* $(TEST_DIR)/* $(QTMAIN)/* $(QTGRAPHICS)/* ./*cpp ./*h
 
 valgrind_tests: clean
 	$(CC) $(CFLAGS) $(SOURCE_TEST) $(SOURCE_PARSER) $(SOURCE_TRANSFORM) -o $(TEST) $(GFLAGS)
