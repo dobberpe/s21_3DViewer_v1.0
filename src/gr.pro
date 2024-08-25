@@ -2,6 +2,8 @@ QT += core gui openglwidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
+include(QtGifImage/src/gifimage/qtgifimage.pri)
+
 QMAKE_CFLAGS   += -Wall -Wextra -Werror -std=gnu11
 QMAKE_CXXFLAGS += -Wall -Wextra -Werror -std=c++17 -O0 -DGL_SILENCE_DEPRECATION
 
