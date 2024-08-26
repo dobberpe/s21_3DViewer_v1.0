@@ -32,7 +32,7 @@ void Viewer::mouseMoveEvent(QMouseEvent *event) {
     move_figure(new_data);
     update();
   } else if (event->buttons() & Qt::RightButton) {
-    new_data->alpha_x = -new_pos.y() * 0.005;
+    new_data->alpha_x = new_pos.y() * 0.005;
     new_data->alpha_y = new_pos.x() * 0.005;
     rotate_figure(new_data);
     update();
@@ -99,17 +99,16 @@ void Viewer::resizeGL(int w, int h) {
   glLoadIdentity();
 
   float aspect = static_cast<float>(w) / static_cast<float>(h);
-  float move_coef_scaled = move_coef;
 
   if (projection_type == CENTRAL_PR) {
-    glFrustum(-aspect, aspect, -1.0f, 1.0f, 1.0f, move_coef_scaled * 8);
-    glTranslatef(0, 0, -move_coef_scaled / 2);
+    glFrustum(-aspect, aspect, -1.0f, 1.0f, 1.0f, move_coef * 8);
+    glTranslatef(0, 0, -move_coef / 2);
   } else {
-    float left = -move_coef_scaled * aspect;
-    float right = move_coef_scaled * aspect;
-    float bottom = -move_coef_scaled;
-    float top = move_coef_scaled;
-    glOrtho(left, right, bottom, top, -move_coef_scaled,
-            move_coef_scaled * 100);
+    float left = -move_coef * aspect;
+    float right = move_coef * aspect;
+    float bottom = -move_coef;
+    float top = move_coef;
+    glOrtho(left, right, bottom, top, -move_coef,
+            move_coef * 100);
   }
 }

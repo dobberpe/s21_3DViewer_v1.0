@@ -44,11 +44,16 @@ SOURCE_TEST = $(wildcard $(TEST_DIR)/*.c)
 .PHONY: all install uninstall cli desktop launch_cli test gcov_report clang_i clang_n cppcheck valgrind_cli valgrind_test rebuild clean dvi dist
 
 all: clean install
-	open $(BUILD_DIR)/gr.app
+ifeq ($(UNAME), Linux)
+	./$(BUILD_DIR)/s21_3dViewer
+endif
+ifeq ($(UNAME), Darwin)
+	open $(BUILD_DIR)/s21_3dViewer.app
+endif
 
 install: uninstall $(BUILD_DIR)
 	@echo "installing process started..."
-	@qmake gr.pro -o $(BUILD_DIR)
+	@qmake s21_3dViewer.pro -o $(BUILD_DIR)
 	@make -C $(BUILD_DIR)
 	@rm -rf $(BUILD_DIR)/*o $(BUILD_DIR)/*h $(BUILD_DIR)/*cpp $(BUILD_DIR)/Makefile
 	@echo "successfuly installed"
