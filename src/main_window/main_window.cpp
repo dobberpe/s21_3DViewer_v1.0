@@ -310,8 +310,9 @@ void main_window::on_moveZSpinBox_valueChanged(int value) {
 
 void main_window::on_scaleSlider_valueChanged(int value) {
   int scale = value - curr_scale;
-  v->curr_scale = pow(scale > 0 ? 1.001 : 0.999, abs(scale));
+  v->curr_scale *= pow(scale > 0 ? 1.001 : 0.999, abs(scale));
   scale_figure(v->new_data, v->curr_scale);
+  curr_scale = value;
   v->update();
 }
 

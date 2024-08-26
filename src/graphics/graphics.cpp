@@ -108,7 +108,6 @@ void Viewer::resizeGL(int w, int h) {
     float right = move_coef * aspect;
     float bottom = -move_coef;
     float top = move_coef;
-    glOrtho(left, right, bottom, top, -move_coef,
-            move_coef * 100);
+    glOrtho(left, right, bottom, top, -move_coef, move_coef * 100);
   }
 }
